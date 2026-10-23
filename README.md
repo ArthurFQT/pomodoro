@@ -70,7 +70,8 @@ pomodoro/
 │   ├── pomodoro.ts        # Durações e máquina de estado das fases
 │   ├── themes.ts           # Lista de temas visuais (fonte única da verdade)
 │   ├── heatmap.ts           # Agregação por dia, níveis de intensidade, streak
-│   └── stats.ts              # Busca os ciclos do usuário e monta as estatísticas
+│   ├── stats.ts              # Busca os ciclos do usuário e monta as estatísticas
+│   └── timer-storage.ts       # Persiste o timer em andamento no localStorage
 ├── auth.ts                # Config completa do Auth.js (providers, Prisma adapter)
 ├── auth.config.ts         # Config "leve" usada pelo proxy.ts (protege rotas)
 ├── proxy.ts                # Protege /dashboard (substitui middleware.ts no Next 16)
