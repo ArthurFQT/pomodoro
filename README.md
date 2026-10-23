@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🍅 Pomodoro
 
-First, run the development server:
+**Um timer Pomodoro simples, rápido e sem distrações.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Status](https://img.shields.io/badge/status-em%20constru%C3%A7%C3%A3o-f97316)](#)
+
+<br />
+
+<img src=".github/preview.jpg" alt="Preview da página inicial do Pomodoro, em construção" width="100%" />
+
+</div>
+
+<br />
+
+> 🚧 **Em construção.** Este projeto ainda está nos primeiros tijolos — a base (Next.js, estrutura de pastas, front/back) já está pronta, mas as funcionalidades do timer Pomodoro em si ainda estão sendo construídas. A página inicial reflete esse status de propósito.
+
+## 📋 Sobre
+
+Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnica Pomodoro: ciclos de foco intercalados com pausas curtas. Construído com Next.js (App Router), reunindo front-end e back-end no mesmo projeto.
+
+## 🛠️ Stack
+
+| Camada     | Tecnologia                          |
+| ---------- | ------------------------------------ |
+| Framework  | [Next.js](https://nextjs.org) (App Router + Turbopack) |
+| UI         | [React](https://react.dev) + [Tailwind CSS](https://tailwindcss.com) |
+| Linguagem  | [TypeScript](https://www.typescriptlang.org) |
+| Lint       | ESLint (`eslint-config-next`)       |
+
+## 📁 Estrutura do projeto
+
+```
+pomodoro/
+├── app/
+│   ├── api/          # Back-end — Route Handlers (endpoints HTTP)
+│   │   └── health/
+│   ├── layout.tsx    # Layout raiz
+│   ├── page.tsx       # Página inicial (front-end)
+│   └── globals.css
+├── components/        # Componentes de UI reutilizáveis (front-end)
+├── public/            # Arquivos estáticos
+└── lib/                # Lógica/utilitários compartilhados (a criar conforme necessário)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Front-end**: `app/` (páginas e layout) + `components/` (UI).
+- **Back-end**: `app/api/` — cada rota é um endpoint HTTP (Route Handler).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Rodando localmente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev
+```
 
-## Learn More
+Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
-To learn more about Next.js, take a look at the following resources:
+## 📜 Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Comando           | Descrição                          |
+| ------------------ | ----------------------------------- |
+| `npm run dev`      | Inicia o servidor de desenvolvimento |
+| `npm run build`    | Gera o build de produção            |
+| `npm run start`    | Inicia o servidor em modo produção  |
+| `npm run lint`     | Roda o ESLint                       |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🗺️ Roadmap
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [x] Estrutura inicial do projeto (front + back)
+- [ ] Timer Pomodoro (foco / pausa curta / pausa longa)
+- [ ] Configurações personalizáveis (duração dos ciclos)
+- [ ] Notificações sonoras e visuais
+- [ ] Histórico de ciclos concluídos

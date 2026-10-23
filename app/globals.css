@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #171717;
 }
 
@@ -14,7 +14,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #09090b;
     --foreground: #ededed;
   }
 }
@@ -23,4 +23,145 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Blueprint grid backdrop */
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.09) 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .blueprint-grid {
+    background-image:
+      linear-gradient(rgba(129, 140, 248, 0.14) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(129, 140, 248, 0.14) 1px, transparent 1px);
+  }
+}
+
+/* Diagonal caution ribbon */
+.ribbon {
+  position: absolute;
+  top: 26px;
+  left: -58px;
+  width: 200px;
+  padding: 7px 0;
+  background: #facc15;
+  border-top: 2px dashed #18181b;
+  border-bottom: 2px dashed #18181b;
+  color: #18181b;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes swing {
+  0%,
+  100% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: rotate(14deg);
+  }
+}
+
+@keyframes gear-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gear-spin-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes rise-fade {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(-70px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes brick-pop {
+  0%,
+  15% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  28%,
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes blink-light {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 12px 4px rgba(249, 115, 22, 0.7);
+  }
+  50% {
+    opacity: 0.35;
+    box-shadow: 0 0 2px 0 rgba(249, 115, 22, 0.2);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 3.6s ease-in-out infinite;
+}
+
+.animate-swing {
+  animation: swing 1.6s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: top center;
+}
+
+.animate-gear-slow {
+  animation: gear-spin 10s linear infinite;
+}
+
+.animate-gear-reverse {
+  animation: gear-spin-reverse 8s linear infinite;
+}
+
+.animate-rise-fade {
+  animation: rise-fade 2.4s ease-out infinite;
+}
+
+.animate-brick-pop {
+  animation: brick-pop 4.2s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: bottom;
+}
+
+.animate-blink-light {
+  animation: blink-light 1s ease-in-out infinite;
 }
