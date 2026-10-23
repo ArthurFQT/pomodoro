@@ -31,6 +31,8 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 | Framework  | [Next.js](https://nextjs.org) (App Router + Turbopack) |
 | UI         | [React](https://react.dev) + [Tailwind CSS](https://tailwindcss.com) |
 | Linguagem  | [TypeScript](https://www.typescriptlang.org) |
+| Autenticação | [Auth.js / NextAuth v5](https://authjs.dev) (Google, GitHub, e-mail/senha) |
+| Banco de dados | [Postgres (Neon)](https://neon.tech) + [Prisma](https://www.prisma.io) |
 | Lint       | ESLint (`eslint-config-next`)       |
 
 ## 📁 Estrutura do projeto
@@ -38,14 +40,26 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 ```
 pomodoro/
 ├── app/
-│   ├── api/          # Back-end — Route Handlers (endpoints HTTP)
-│   │   └── health/
-│   ├── layout.tsx    # Layout raiz
-│   ├── page.tsx       # Página inicial (front-end)
+│   ├── api/            # Back-end — Route Handlers (endpoints HTTP)
+│   │   ├── auth/        # Auth.js (login/callback/signout)
+│   │   ├── health/
+│   │   └── register/    # Cadastro (e-mail/senha)
+│   ├── dashboard/        # Área autenticada (protegida pelo proxy.ts)
+│   ├── login/
+│   ├── register/
+│   ├── layout.tsx       # Layout raiz
+│   ├── page.tsx          # Página inicial (front-end)
 │   └── globals.css
-├── components/        # Componentes de UI reutilizáveis (front-end)
-├── public/            # Arquivos estáticos
-└── lib/                # Lógica/utilitários compartilhados (a criar conforme necessário)
+├── components/
+│   └── auth/             # Formulários e botões de login/cadastro/logout
+├── prisma/
+│   └── schema.prisma     # Modelos: User, Account, Session, Cycle...
+├── lib/
+│   └── prisma.ts         # Prisma Client (singleton)
+├── auth.ts                # Config completa do Auth.js (providers, Prisma adapter)
+├── auth.config.ts         # Config "leve" usada pelo proxy.ts (protege rotas)
+├── proxy.ts                # Protege /dashboard (substitui middleware.ts no Next 16)
+└── public/                 # Arquivos estáticos
 ```
 
 - **Front-end**: `app/` (páginas e layout) + `components/` (UI).
@@ -60,19 +74,39 @@ npm run dev
 
 Abra [http://localhost:3000](http://localhost:3000) no navegador.
 
+## 🔑 Configuração do ambiente
+
+Copie `.env.example` para `.env.local` e preencha:
+
+| Variável | Onde conseguir |
+| --- | --- |
+| `DATABASE_URL` | Crie um projeto em [neon.tech](https://neon.tech) (free tier) e copie a connection string |
+| `AUTH_SECRET` | Gere com `npx auth secret` (ou `openssl rand -base64 32`) |
+| `AUTH_GOOGLE_ID` / `AUTH_GOOGLE_SECRET` | Crie um OAuth Client em [console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials) — redirect URI: `http://localhost:3000/api/auth/callback/google` |
+| `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` | Crie um OAuth App em [github.com/settings/developers](https://github.com/settings/developers) — callback URL: `http://localhost:3000/api/auth/callback/github` |
+
+O app builda e roda sem o Google/GitHub configurados (esses botões de login só aparecem quando as variáveis existem), mas **`DATABASE_URL` é necessária** para qualquer login funcionar (inclusive cadastro por e-mail/senha). Depois de configurar, crie as tabelas com:
+
+```bash
+npm run db:push
+```
+
 ## 📜 Scripts
 
-| Comando           | Descrição                          |
-| ------------------ | ----------------------------------- |
-| `npm run dev`      | Inicia o servidor de desenvolvimento |
-| `npm run build`    | Gera o build de produção            |
-| `npm run start`    | Inicia o servidor em modo produção  |
-| `npm run lint`     | Roda o ESLint                       |
+| Comando             | Descrição                            |
+| -------------------- | ------------------------------------- |
+| `npm run dev`        | Inicia o servidor de desenvolvimento  |
+| `npm run build`      | Gera o build de produção              |
+| `npm run start`      | Inicia o servidor em modo produção    |
+| `npm run lint`       | Roda o ESLint                         |
+| `npm run db:push`    | Sincroniza o schema Prisma com o banco |
+| `npm run db:migrate` | Cria uma migration Prisma             |
+| `npm run db:studio`  | Abre o Prisma Studio (GUI do banco)   |
 
 ## 🗺️ Roadmap
 
 - [x] Estrutura inicial do projeto (front + back)
-- [ ] Autenticação (login por usuário)
+- [x] Fundação de autenticação + banco de dados (Auth.js + Prisma + Neon)
 - [ ] Timer Pomodoro (foco / pausa curta / pausa longa) com temas
 - [ ] Histórico de ciclos concluídos
 - [ ] Heatmap de ciclos por dia
