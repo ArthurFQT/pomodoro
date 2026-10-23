@@ -165,3 +165,43 @@ body {
 .animate-blink-light {
   animation: blink-light 1s ease-in-out infinite;
 }
+
+/* Temas do app autenticado — ids em sincronia com lib/themes.ts */
+[data-theme="tomato"] {
+  --accent-from: #dc2626;
+  --accent-to: #f97316;
+}
+
+[data-theme="citrus"] {
+  --accent-from: #ca8a04;
+  --accent-to: #65a30d;
+}
+
+[data-theme="berry"] {
+  --accent-from: #be185d;
+  --accent-to: #9333ea;
+}
+
+[data-theme="ocean"] {
+  --accent-from: #0369a1;
+  --accent-to: #06b6d4;
+}
+
+[data-theme="forest"] {
+  --accent-from: #15803d;
+  --accent-to: #84cc16;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px var(--accent-to));
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 1.6s ease-in-out infinite;
+}
