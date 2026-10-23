@@ -8,17 +8,15 @@
 [![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Status](https://img.shields.io/badge/status-em%20constru%C3%A7%C3%A3o-f97316)](#)
+[![Status](https://img.shields.io/badge/status-ativo-16a34a)](#)
 
 <br />
 
-<img src=".github/preview.jpg" alt="Preview da página inicial do Pomodoro, em construção" width="100%" />
+<img src=".github/preview.jpg" alt="Preview da landing page do Pomodoro" width="100%" />
 
 </div>
 
 <br />
-
-> 🚧 **Em construção.** Este projeto ainda está nos primeiros tijolos — a base (Next.js, estrutura de pastas, front/back) já está pronta, mas as funcionalidades do timer Pomodoro em si ainda estão sendo construídas. A página inicial reflete esse status de propósito.
 
 ## 📋 Sobre
 
@@ -56,13 +54,14 @@ pomodoro/
 │   ├── login/
 │   ├── register/
 │   ├── layout.tsx       # Layout raiz
-│   ├── page.tsx          # Página inicial (front-end)
+│   ├── page.tsx          # Landing page (front-end, pública)
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
 │   ├── timer/             # PomodoroTimer, ProgressRing, ThemeSwitcher
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
-│   └── layout/              # DashboardNav
+│   ├── layout/              # DashboardNav
+│   └── landing/              # Hero, FeatureCard, HowItWorks
 ├── prisma/
 │   └── schema.prisma     # Modelos: User (com theme), Account, Session, Cycle...
 ├── lib/
@@ -125,7 +124,7 @@ npm run db:push
 - [x] Fundação de autenticação + banco de dados (Auth.js + Prisma + Neon)
 - [x] Timer Pomodoro (foco / pausa curta / pausa longa) com 5 temas visuais
 - [x] Histórico de ciclos concluídos, heatmap de ciclos por dia e streak
-- [ ] Landing page de apresentação
+- [x] Landing page de apresentação
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 

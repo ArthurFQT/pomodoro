@@ -1,32 +1,108 @@
-import { BuildProgress } from "@/components/BuildProgress";
-import { GearIcon } from "@/components/GearIcon";
-import { TomatoBuilder } from "@/components/TomatoBuilder";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+import { auth } from "@/auth";
+import { Hero } from "@/components/landing/Hero";
+import { FeatureCard } from "@/components/landing/FeatureCard";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+
+// A sessão é lida por requisição (cookies) — não pode ser pré-renderizado.
+export const instant = false;
+
+const FEATURES = [
+  {
+    icon: "⏱️",
+    title: "Timer com 5 temas",
+    description:
+      "Foco, pausa curta e pausa longa num visual que você escolhe — do tomate clássico ao oceano.",
+  },
+  {
+    icon: "🔥",
+    title: "Streak",
+    description:
+      "Acompanhe sua sequência de dias seguidos e mantenha o hábito vivo.",
+  },
+  {
+    icon: "📅",
+    title: "Heatmap de atividade",
+    description:
+      "Veja num calendário visual quais dias você mais focou, de relance.",
+  },
+  {
+    icon: "🔐",
+    title: "Sua conta, seus dados",
+    description:
+      "Login com Google, GitHub ou e-mail — seus ciclos ficam salvos com segurança.",
+  },
+] as const;
+
+export default async function Home() {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
-    <section className="blueprint-grid relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-zinc-50 dark:bg-zinc-950">
-      <div className="ribbon">EM CONSTRUÇÃO</div>
+    <div
+      data-theme="tomato"
+      className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950"
+    >
+      <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
+        <span className="text-lg font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+          🍅 Pomodoro
+        </span>
+        <nav className="flex items-center gap-4 text-sm font-medium">
+          <Link
+            href="/login"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+          >
+            Entrar
+          </Link>
+          <Link
+            href="/register"
+            className="rounded-full bg-gradient-to-br from-[var(--accent-from)] to-[var(--accent-to)] px-4 py-2 text-white transition-opacity hover:opacity-90"
+          >
+            Criar conta
+          </Link>
+        </nav>
+      </header>
 
-      <GearIcon className="animate-gear-slow pointer-events-none absolute -top-10 -left-10 h-40 w-40 text-amber-400/25" />
-      <GearIcon className="animate-gear-reverse pointer-events-none absolute -right-14 bottom-6 h-56 w-56 text-red-400/15" />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-6">
+        <Hero />
 
-      <main className="relative z-10 flex flex-col items-center gap-10 px-6 py-20 text-center">
-        <div className="animate-float-slow h-52 w-52">
-          <TomatoBuilder />
-        </div>
+        <section className="grid gap-6 py-16 sm:grid-cols-2 lg:grid-cols-4">
+          {FEATURES.map((feature) => (
+            <FeatureCard key={feature.title} {...feature} />
+          ))}
+        </section>
 
-        <div className="flex flex-col items-center gap-3">
-          <h1 className="bg-gradient-to-br from-red-600 to-orange-500 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent sm:text-6xl">
-            Pomodoro
-          </h1>
-          <p className="flex items-center gap-2 text-lg text-zinc-600 dark:text-zinc-400">
-            <span className="animate-blink-light h-3 w-3 rounded-full bg-orange-500" />
-            Estamos construindo algo delicioso
-          </p>
-        </div>
+        <HowItWorks />
 
-        <BuildProgress />
+        <section className="flex flex-col items-center gap-6 rounded-3xl bg-gradient-to-br from-[var(--accent-from)] to-[var(--accent-to)] px-6 py-16 text-center">
+          <h2 className="text-3xl font-bold text-white">
+            Comece seu primeiro ciclo hoje
+          </h2>
+          <Link
+            href="/register"
+            className="rounded-full bg-white px-8 py-3 text-sm font-semibold text-zinc-900 transition-opacity hover:opacity-90"
+          >
+            Comece agora
+          </Link>
+        </section>
       </main>
-    </section>
+
+      <footer className="mx-auto flex w-full max-w-5xl flex-col items-center gap-2 px-6 py-10 text-center text-sm text-zinc-500 dark:text-zinc-500">
+        <span>🍅 Pomodoro</span>
+        <a
+          href="https://github.com/ArthurFQT/pomodoro"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:text-zinc-700 dark:hover:text-zinc-300"
+        >
+          Código aberto no GitHub
+        </a>
+      </footer>
+    </div>
   );
 }
