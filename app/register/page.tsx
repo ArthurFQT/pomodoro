@@ -1,8 +1,19 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { auth } from "@/auth";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
-export default function RegisterPage() {
+// A sessão é lida por requisição (cookies) — não pode ser pré-renderizado.
+export const instant = false;
+
+export default async function RegisterPage() {
+  const session = await auth();
+
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <section className="flex flex-1 flex-col items-center justify-center gap-8 bg-zinc-50 px-6 py-20 dark:bg-zinc-950">
       <div className="flex flex-col items-center gap-2 text-center">
