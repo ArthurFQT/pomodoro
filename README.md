@@ -24,6 +24,10 @@
 
 Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnica Pomodoro: ciclos de foco intercalados com pausas curtas. Construído com Next.js (App Router), reunindo front-end e back-end no mesmo projeto.
 
+## ⏱️ Como funciona o timer
+
+Foco de 25 minutos → pausa curta de 5 minutos, repetindo; a cada 4 focos, uma pausa longa de 15 minutos. Ao terminar uma etapa, toca um aviso sonoro/notificação e mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak futuros). O tema visual (5 opções) é salvo na conta e sincroniza entre dispositivos.
+
 ## 🛠️ Stack
 
 | Camada     | Tecnologia                          |
@@ -45,17 +49,23 @@ pomodoro/
 │   │   ├── health/
 │   │   └── register/    # Cadastro (e-mail/senha)
 │   ├── dashboard/        # Área autenticada (protegida pelo proxy.ts)
+│   │   ├── layout.tsx    # Shell logado: cabeçalho, tema do usuário, sign out
+│   │   ├── page.tsx       # O timer Pomodoro
+│   │   └── actions.ts     # Server Actions: recordCycle, setTheme
 │   ├── login/
 │   ├── register/
 │   ├── layout.tsx       # Layout raiz
 │   ├── page.tsx          # Página inicial (front-end)
 │   └── globals.css
 ├── components/
-│   └── auth/             # Formulários e botões de login/cadastro/logout
+│   ├── auth/             # Formulários e botões de login/cadastro/logout
+│   └── timer/             # PomodoroTimer, ProgressRing, ThemeSwitcher
 ├── prisma/
-│   └── schema.prisma     # Modelos: User, Account, Session, Cycle...
+│   └── schema.prisma     # Modelos: User (com theme), Account, Session, Cycle...
 ├── lib/
-│   └── prisma.ts         # Prisma Client (singleton)
+│   ├── prisma.ts         # Prisma Client (singleton)
+│   ├── pomodoro.ts        # Durações e máquina de estado das fases
+│   └── themes.ts           # Lista de temas visuais (fonte única da verdade)
 ├── auth.ts                # Config completa do Auth.js (providers, Prisma adapter)
 ├── auth.config.ts         # Config "leve" usada pelo proxy.ts (protege rotas)
 ├── proxy.ts                # Protege /dashboard (substitui middleware.ts no Next 16)
@@ -107,7 +117,7 @@ npm run db:push
 
 - [x] Estrutura inicial do projeto (front + back)
 - [x] Fundação de autenticação + banco de dados (Auth.js + Prisma + Neon)
-- [ ] Timer Pomodoro (foco / pausa curta / pausa longa) com temas
+- [x] Timer Pomodoro (foco / pausa curta / pausa longa) com 5 temas visuais
 - [ ] Histórico de ciclos concluídos
 - [ ] Heatmap de ciclos por dia
 - [ ] Streak (sequência de dias de uso)

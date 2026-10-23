@@ -16,6 +16,9 @@ model User {
   // Hash bcrypt da senha. Só é preenchido para usuários cadastrados via
   // e-mail/senha (Credentials); usuários de login social ficam com null.
   password      String?
+  // Id de um tema em lib/themes.ts. String livre (não enum do Postgres)
+  // para não exigir migration a cada novo tema adicionado.
+  theme         String    @default("tomato")
 
   accounts Account[]
   sessions Session[]
