@@ -205,3 +205,37 @@ body {
 .animate-pulse-glow {
   animation: pulse-glow 1.6s ease-in-out infinite;
 }
+
+/* Heatmap: rampa sequencial de um único hue (o tema ativo), do neutro ao
+   accent — nível 0 é o "vazio", nível 4 é o accent puro. */
+:root {
+  --heatmap-cell-0: #e4e4e7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --heatmap-cell-0: #27272a;
+  }
+}
+
+.heatmap-cell {
+  width: 11px;
+  height: 11px;
+  background-color: var(--heatmap-cell-0);
+}
+
+.heatmap-cell[data-level="1"] {
+  background-color: color-mix(in oklch, var(--accent-to) 25%, var(--heatmap-cell-0));
+}
+
+.heatmap-cell[data-level="2"] {
+  background-color: color-mix(in oklch, var(--accent-to) 50%, var(--heatmap-cell-0));
+}
+
+.heatmap-cell[data-level="3"] {
+  background-color: color-mix(in oklch, var(--accent-to) 75%, var(--heatmap-cell-0));
+}
+
+.heatmap-cell[data-level="4"] {
+  background-color: var(--accent-to);
+}

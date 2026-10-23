@@ -49,9 +49,10 @@ pomodoro/
 │   │   ├── health/
 │   │   └── register/    # Cadastro (e-mail/senha)
 │   ├── dashboard/        # Área autenticada (protegida pelo proxy.ts)
-│   │   ├── layout.tsx    # Shell logado: cabeçalho, tema do usuário, sign out
+│   │   ├── layout.tsx    # Shell logado: cabeçalho, nav, tema do usuário, sign out
 │   │   ├── page.tsx       # O timer Pomodoro
-│   │   └── actions.ts     # Server Actions: recordCycle, setTheme
+│   │   ├── actions.ts     # Server Actions: recordCycle, setTheme
+│   │   └── historico/     # Heatmap + streak + ciclos recentes
 │   ├── login/
 │   ├── register/
 │   ├── layout.tsx       # Layout raiz
@@ -59,13 +60,17 @@ pomodoro/
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
-│   └── timer/             # PomodoroTimer, ProgressRing, ThemeSwitcher
+│   ├── timer/             # PomodoroTimer, ProgressRing, ThemeSwitcher
+│   ├── history/            # Heatmap, StreakTile, RecentCyclesList
+│   └── layout/              # DashboardNav
 ├── prisma/
 │   └── schema.prisma     # Modelos: User (com theme), Account, Session, Cycle...
 ├── lib/
 │   ├── prisma.ts         # Prisma Client (singleton)
 │   ├── pomodoro.ts        # Durações e máquina de estado das fases
-│   └── themes.ts           # Lista de temas visuais (fonte única da verdade)
+│   ├── themes.ts           # Lista de temas visuais (fonte única da verdade)
+│   ├── heatmap.ts           # Agregação por dia, níveis de intensidade, streak
+│   └── stats.ts              # Busca os ciclos do usuário e monta as estatísticas
 ├── auth.ts                # Config completa do Auth.js (providers, Prisma adapter)
 ├── auth.config.ts         # Config "leve" usada pelo proxy.ts (protege rotas)
 ├── proxy.ts                # Protege /dashboard (substitui middleware.ts no Next 16)
@@ -118,9 +123,7 @@ npm run db:push
 - [x] Estrutura inicial do projeto (front + back)
 - [x] Fundação de autenticação + banco de dados (Auth.js + Prisma + Neon)
 - [x] Timer Pomodoro (foco / pausa curta / pausa longa) com 5 temas visuais
-- [ ] Histórico de ciclos concluídos
-- [ ] Heatmap de ciclos por dia
-- [ ] Streak (sequência de dias de uso)
+- [x] Histórico de ciclos concluídos, heatmap de ciclos por dia e streak
 - [ ] Landing page de apresentação
 
 ## 🌿 Fluxo de trabalho (Git Flow)
