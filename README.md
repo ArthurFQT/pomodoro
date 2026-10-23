@@ -72,7 +72,19 @@ Abra [http://localhost:3000](http://localhost:3000) no navegador.
 ## 🗺️ Roadmap
 
 - [x] Estrutura inicial do projeto (front + back)
-- [ ] Timer Pomodoro (foco / pausa curta / pausa longa)
-- [ ] Configurações personalizáveis (duração dos ciclos)
-- [ ] Notificações sonoras e visuais
+- [ ] Autenticação (login por usuário)
+- [ ] Timer Pomodoro (foco / pausa curta / pausa longa) com temas
 - [ ] Histórico de ciclos concluídos
+- [ ] Heatmap de ciclos por dia
+- [ ] Streak (sequência de dias de uso)
+- [ ] Landing page de apresentação
+
+## 🌿 Fluxo de trabalho (Git Flow)
+
+- **`main`** — produção. Só recebe merges vindos de `release/*` ou `hotfix/*`. Protegida: nenhum push direto, nem do admin.
+- **`develop`** — integração. Branch padrão do repositório; para onde as features vão primeiro. Também protegida.
+- **`feat/<nome>`** — uma branch por funcionalidade, criada a partir de `develop`. Ex: `feat/auth-login`.
+- **`release/<versão>`** — preparação de uma versão antes de ir para `main`. Ex: `release/1.0.0`.
+- **`hotfix/<nome>`** — correção urgente direto a partir de `main`, depois mesclada em `main` e `develop`.
+
+Todo trabalho entra por Pull Request (push direto em `main`/`develop` é bloqueado pelas regras de proteção de branch no GitHub).
