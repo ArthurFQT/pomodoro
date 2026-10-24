@@ -1,8 +1,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
-import { SettingsForm } from "@/components/settings/SettingsForm";
+import { GeneralTab } from "@/components/settings/tabs/GeneralTab";
 import { ThemePicker } from "@/components/settings/ThemePicker";
+import { Tabs } from "@/components/ui/Tabs";
 
 // A sessão e as configurações são lidas a cada requisição — não pode ser
 // pré-renderizado estaticamente.
@@ -26,6 +27,7 @@ export default async function ConfiguracoesPage() {
       longBreakInterval: true,
       soundEnabled: true,
       notificationsEnabled: true,
+      autoStartBreaks: true,
     },
   });
 
@@ -41,9 +43,16 @@ export default async function ConfiguracoesPage() {
         Configurações
       </h1>
 
-      <ThemePicker currentTheme={currentTheme} />
-
-      <SettingsForm initialSettings={user} />
+      <Tabs
+        items={[
+          { id: "geral", label: "Geral", content: <GeneralTab initialSettings={user} /> },
+          {
+            id: "aparencia",
+            label: "Aparência",
+            content: <ThemePicker currentTheme={currentTheme} />,
+          },
+        ]}
+      />
     </div>
   );
 }

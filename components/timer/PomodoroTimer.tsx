@@ -141,13 +141,28 @@ export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps)
         settings.longBreakInterval,
       );
 
-      setState((prev) => ({
-        ...prev,
-        status: "completed",
-        phaseEndsAt: null,
-        secondsLeft: 0,
-        pending: { phase: nextPhase, focusCount: nextFocusCount },
-      }));
+      // Auto-start de pausas: só pula a confirmação quando um FOCO termina —
+      // voltar ao foco a partir de uma pausa continua exigindo o clique.
+      if (phase === "FOCUS" && settings.autoStartBreaks) {
+        const duration = phaseDurations[nextPhase];
+        setState((prev) => ({
+          ...prev,
+          phase: nextPhase,
+          focusCount: nextFocusCount,
+          secondsLeft: duration,
+          phaseEndsAt: Date.now() + duration * 1000,
+          status: "running",
+          pending: null,
+        }));
+      } else {
+        setState((prev) => ({
+          ...prev,
+          status: "completed",
+          phaseEndsAt: null,
+          secondsLeft: 0,
+          pending: { phase: nextPhase, focusCount: nextFocusCount },
+        }));
+      }
 
       recordCycle(phase, Math.round(phaseDurations[phase] / 60)).catch(
         () => {},
@@ -197,15 +212,30 @@ export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps)
           saved.focusCount,
           settings.longBreakInterval,
         );
-        setState({
-          phase: saved.phase,
-          focusCount: nextFocusCount,
-          secondsLeft: 0,
-          status: "completed",
-          phaseEndsAt: null,
-          pending: { phase: nextPhase, focusCount: nextFocusCount },
-          hydrated: true,
-        });
+
+        if (saved.phase === "FOCUS" && settings.autoStartBreaks) {
+          const duration = phaseDurations[nextPhase];
+          setState({
+            phase: nextPhase,
+            focusCount: nextFocusCount,
+            secondsLeft: duration,
+            status: "running",
+            phaseEndsAt: Date.now() + duration * 1000,
+            pending: null,
+            hydrated: true,
+          });
+        } else {
+          setState({
+            phase: saved.phase,
+            focusCount: nextFocusCount,
+            secondsLeft: 0,
+            status: "completed",
+            phaseEndsAt: null,
+            pending: { phase: nextPhase, focusCount: nextFocusCount },
+            hydrated: true,
+          });
+        }
+
         recordCycle(
           saved.phase,
           Math.round(phaseDurations[saved.phase] / 60),

@@ -27,6 +27,7 @@ model User {
   longBreakInterval    Int     @default(4)
   soundEnabled         Boolean @default(true)
   notificationsEnabled Boolean @default(true)
+  autoStartBreaks      Boolean @default(false)
 
   accounts Account[]
   sessions Session[]

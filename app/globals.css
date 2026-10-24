@@ -172,12 +172,62 @@ body {
    accent — nível 0 é o "vazio", nível 4 é o accent puro. */
 :root {
   --heatmap-cell-0: #e4e4e7;
+  --switch-off: #d4d4d8;
+  --slider-track: #e4e4e7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --heatmap-cell-0: #27272a;
+    --switch-off: #3f3f46;
+    --slider-track: #3f3f46;
   }
+}
+
+/* Slider customizado (componentes/ui/Slider.tsx): input[type=range] nativo
+   por baixo (mantém navegação por teclado e leitura por leitor de tela),
+   só a aparência é redesenhada. --slider-fill é escrito inline por item,
+   em % do valor atual dentro do range. */
+.slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--accent-to) var(--slider-fill, 0%),
+    var(--slider-track) var(--slider-fill, 0%)
+  );
+  outline: none;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--accent-to);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.slider-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--accent-to);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.slider-input::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: transparent;
 }
 
 .heatmap-cell {

@@ -25,6 +25,7 @@ export default async function DashboardPage() {
       longBreakInterval: true,
       soundEnabled: true,
       notificationsEnabled: true,
+      autoStartBreaks: true,
     },
   });
 
