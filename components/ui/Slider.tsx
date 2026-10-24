@@ -9,9 +9,18 @@ type SliderProps = {
   max: number;
   defaultValue: number;
   unit?: string;
+  onChange?: (value: number) => void;
 };
 
-export function Slider({ name, label, min, max, defaultValue, unit = "min" }: SliderProps) {
+export function Slider({
+  name,
+  label,
+  min,
+  max,
+  defaultValue,
+  unit = "min",
+  onChange,
+}: SliderProps) {
   const [value, setValue] = useState(defaultValue);
   const id = useId();
   const fillPercent = ((value - min) / (max - min)) * 100;
@@ -33,7 +42,11 @@ export function Slider({ name, label, min, max, defaultValue, unit = "min" }: Sl
         min={min}
         max={max}
         value={value}
-        onChange={(event) => setValue(Number(event.target.value))}
+        onChange={(event) => {
+          const next = Number(event.target.value);
+          setValue(next);
+          onChange?.(next);
+        }}
         className="slider-input"
         style={{ "--slider-fill": `${fillPercent}%` } as React.CSSProperties}
       />

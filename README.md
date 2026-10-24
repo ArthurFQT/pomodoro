@@ -26,6 +26,8 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa, som/notificação ao concluir e auto-iniciar pausas são configuráveis na aba **Geral** de `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar um foco, o padrão é mostrar um botão único para iniciar a pausa — com "auto-iniciar pausas" ativado, a pausa começa sozinha; voltar da pausa para o foco sempre exige esse clique. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak).
 
+A aba **Sons** controla o alarme ao concluir uma etapa (4 opções — Sino/Suave/Clássico/Digital — com botão de prévia) e o volume, além de um ruído ambiente opcional (branco ou rosa) que toca continuamente enquanto o timer está rodando, em qualquer fase. Todo o áudio é gerado na hora via Web Audio API (osciladores para os alarmes, ruído sintetizado para o ambiente) — nenhum arquivo de áudio é carregado.
+
 O visual do timer tem dois eixos independentes, escolhidos na aba **Aparência** (com preview de verdade): o **estilo** — 4 formatos próprios (Minimalista: anel fino; Pastel: blob respirando; Lofi: disco de vinil girando; Retro: visor LCD com barra de progresso) — e, dentro do estilo escolhido, a **cor muda sozinha conforme a fase** (foco/pausa curta/pausa longa), sem precisar trocar de estilo pra isso.
 
 A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
@@ -57,9 +59,9 @@ pomodoro/
 │   ├── dashboard/        # Área autenticada (protegida pelo proxy.ts)
 │   │   ├── layout.tsx    # Shell logado: cabeçalho, nav, tema do usuário, sign out
 │   │   ├── page.tsx       # O timer Pomodoro
-│   │   ├── actions.ts     # Server Actions: recordCycle, setStyle, setColorMode, updateSettings
+│   │   ├── actions.ts     # Server Actions: recordCycle, setStyle, setColorMode, updateSettings, updateSoundSettings
 │   │   ├── historico/     # Heatmap + streak + ciclos recentes
-│   │   └── configuracoes/  # Durações, intervalo da pausa longa, som/notificação
+│   │   └── configuracoes/  # Abas Geral/Aparência/Sons
 │   ├── login/
 │   ├── register/
 │   ├── layout.tsx       # Layout raiz
@@ -70,8 +72,8 @@ pomodoro/
 │   ├── timer/             # PomodoroTimer, StyleFace, FullscreenToggle, ProgressRing
 │   │   └── styles/          # Um componente por estilo (4): Minimal/Pastel/Lofi/Retro
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
-│   ├── settings/            # StylePicker, ColorModePicker + tabs/GeneralTab
-│   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider, RadioGroup
+│   ├── settings/            # StylePicker, ColorModePicker + tabs/GeneralTab/SoundsTab
+│   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider, RadioGroup, Select
 │   ├── layout/                 # DashboardNav
 │   └── landing/                 # Hero, FeatureCard, HowItWorks
 ├── prisma/
@@ -81,9 +83,11 @@ pomodoro/
 │   ├── pomodoro.ts        # Durações e máquina de estado das fases
 │   ├── styles.ts           # Estilos visuais + cor por fase (fonte única da verdade)
 │   ├── color-mode.ts        # Modos de cor (Automático/Claro/Escuro/OLED)
-│   ├── heatmap.ts           # Agregação por dia, níveis de intensidade, streak
-│   ├── stats.ts              # Busca os ciclos do usuário e monta as estatísticas
-│   └── timer-storage.ts       # Persiste o timer em andamento no localStorage
+│   ├── sound.ts              # Sons de alarme e ruídos ambiente (ids e labels)
+│   ├── audio-engine.ts        # Geração de áudio via Web Audio API (client-only)
+│   ├── heatmap.ts              # Agregação por dia, níveis de intensidade, streak
+│   ├── stats.ts                # Busca os ciclos do usuário e monta as estatísticas
+│   └── timer-storage.ts         # Persiste o timer em andamento no localStorage
 ├── auth.ts                # Config completa do Auth.js (providers, Prisma adapter)
 ├── auth.config.ts         # Config "leve" usada pelo proxy.ts (protege rotas)
 ├── proxy.ts                # Protege /dashboard (substitui middleware.ts no Next 16)
@@ -142,6 +146,7 @@ npm run db:push
 - [x] Configurações em abas (Geral/Aparência) com componentes próprios (Switch, Slider, Tabs) e auto-iniciar pausas
 - [x] Modo de cor manual (Automático/Claro/Escuro/OLED), independente do estilo visual
 - [x] 4 estilos visuais com formato próprio (Minimalista/Pastel/Lofi/Retro), cor que muda por fase
+- [x] Aba Sons: alarme com 4 opções + prévia, volume, ruído ambiente (branco/rosa) durante o foco
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 
