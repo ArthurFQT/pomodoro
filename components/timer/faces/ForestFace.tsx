@@ -1,4 +1,4 @@
-import type { TimerFaceProps } from "./types";
+import { DEFAULT_FACE_SIZE, type TimerFaceProps } from "./types";
 
 const STEM_TOP_Y = 60;
 const STEM_BASE_Y = 260;
@@ -16,7 +16,12 @@ function leafOpacity(elapsed: number, leafY: number) {
   return grown <= leafY ? 1 : 0;
 }
 
-export function ForestFace({ progress, pulsing, children }: TimerFaceProps) {
+export function ForestFace({
+  progress,
+  pulsing,
+  size = DEFAULT_FACE_SIZE,
+  children,
+}: TimerFaceProps) {
   const clamped = Math.min(1, Math.max(0, progress));
   const elapsed = 1 - clamped;
   const dashoffset = STEM_LENGTH * clamped;
@@ -25,7 +30,8 @@ export function ForestFace({ progress, pulsing, children }: TimerFaceProps) {
     <div className="flex flex-col items-center gap-4">
       <svg
         viewBox="0 0 160 280"
-        className={`h-64 w-36 ${pulsing ? "animate-pulse-glow" : ""}`}
+        className={pulsing ? "animate-pulse-glow" : ""}
+        style={{ width: size * (160 / 280), height: size }}
         aria-hidden="true"
       >
         <line

@@ -1,4 +1,4 @@
-import type { TimerFaceProps } from "./types";
+import { DEFAULT_FACE_SIZE, type TimerFaceProps } from "./types";
 
 // Coordenadas relativas (0-100) desenhadas à mão formando um cacho.
 const DOTS = [
@@ -18,7 +18,12 @@ const DOTS = [
   { x: 50, y: 86 },
 ];
 
-export function BerryFace({ progress, pulsing, children }: TimerFaceProps) {
+export function BerryFace({
+  progress,
+  pulsing,
+  size = DEFAULT_FACE_SIZE,
+  children,
+}: TimerFaceProps) {
   const clamped = Math.min(1, Math.max(0, progress));
   const elapsed = 1 - clamped;
   const litCount = Math.round(elapsed * DOTS.length);
@@ -27,7 +32,8 @@ export function BerryFace({ progress, pulsing, children }: TimerFaceProps) {
     <div className="flex flex-col items-center gap-4">
       <svg
         viewBox="0 0 100 100"
-        className={`h-64 w-64 ${pulsing ? "animate-pulse-glow" : ""}`}
+        className={pulsing ? "animate-pulse-glow" : ""}
+        style={{ width: size * 0.86, height: size * 0.86 }}
         aria-hidden="true"
       >
         <path

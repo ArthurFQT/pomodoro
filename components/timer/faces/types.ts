@@ -5,5 +5,9 @@ export type TimerFaceProps = {
   progress: number;
   /** true quando a etapa acabou de concluir — estado celebratório. */
   pulsing?: boolean;
+  /** Lado do bounding box em pixels. @default 280 */
+  size?: number;
   children: ReactNode;
 };
+
+export const DEFAULT_FACE_SIZE = 280;
