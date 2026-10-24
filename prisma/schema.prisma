@@ -16,9 +16,10 @@ model User {
   // Hash bcrypt da senha. Só é preenchido para usuários cadastrados via
   // e-mail/senha (Credentials); usuários de login social ficam com null.
   password      String?
-  // Id de um tema em lib/themes.ts. String livre (não enum do Postgres)
-  // para não exigir migration a cada novo tema adicionado.
-  theme         String    @default("tomato")
+  // Id de um estilo em lib/styles.ts (nome da coluna ficou do sistema de
+  // temas antigo). String livre (não enum do Postgres) para não exigir
+  // migration a cada novo estilo adicionado.
+  theme         String    @default("minimal")
   // "system" | "light" | "dark" | "oled" — ver lib/color-mode.ts.
   colorMode     String    @default("system")
 

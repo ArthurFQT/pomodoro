@@ -58,43 +58,9 @@ body {
     );
 }
 
-/* Temas visuais — ids em sincronia com lib/themes.ts. "tomato" é o padrão
-   da marca usado nas páginas públicas; os demais só se aplicam na área
-   autenticada, onde o usuário escolhe. */
-[data-theme="tomato"] {
-  --accent-from: #dc2626;
-  --accent-to: #f97316;
-}
-
-[data-theme="citrus"] {
-  --accent-from: #ca8a04;
-  --accent-to: #65a30d;
-}
-
-[data-theme="berry"] {
-  --accent-from: #be185d;
-  --accent-to: #9333ea;
-}
-
-[data-theme="ocean"] {
-  --accent-from: #0369a1;
-  --accent-to: #06b6d4;
-}
-
-[data-theme="forest"] {
-  --accent-from: #15803d;
-  --accent-to: #84cc16;
-}
-
-[data-theme="soft"] {
-  --accent-from: #c4b5fd;
-  --accent-to: #fbcfe8;
-}
-
-[data-theme="nata"] {
-  --accent-from: #a8765a;
-  --accent-to: #e8c9a0;
-}
+/* As cores de --accent-from/--accent-to dos estilos (lib/styles.ts) são
+   aplicadas via custom property inline, não mais por atributo CSS — a cor
+   muda por fase (foco/pausa), não dá mais pra fixar por seletor estático. */
 
 @keyframes pulse-glow {
   0%,
@@ -110,38 +76,7 @@ body {
   animation: pulse-glow 1.6s ease-in-out infinite;
 }
 
-/* Face "oceano" do timer: deriva horizontal da onda na superfície da água. */
-@keyframes wave-drift {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-140px);
-  }
-}
-
-.animate-wave-drift {
-  animation: wave-drift 3s linear infinite;
-}
-
-/* Face "floresta" do timer: leve balanço das folhas. */
-@keyframes leaf-sway {
-  0%,
-  100% {
-    transform: rotate(-6deg);
-  }
-  50% {
-    transform: rotate(6deg);
-  }
-}
-
-.animate-leaf-sway {
-  animation: leaf-sway 2.4s ease-in-out infinite;
-  transform-box: fill-box;
-  transform-origin: bottom center;
-}
-
-/* Face "soft" do timer: respiração suave e contínua. */
+/* Estilo "Pastel": respiração suave e contínua do blob. */
 @keyframes breathe {
   0%,
   100% {
@@ -158,23 +93,29 @@ body {
   transform-origin: center;
 }
 
-/* Face "nata" do timer: fiozinho de vapor subindo e sumindo. */
-@keyframes steam-rise {
-  0% {
-    transform: translateY(0) scaleX(1);
-    opacity: 0;
-  }
-  30% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(-22px) scaleX(1.5);
-    opacity: 0;
+/* Estilo "Lofi": o disco de vinil gira devagar e continuamente. */
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.animate-steam {
-  animation: steam-rise 2.8s ease-in-out infinite;
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* Estilo "Retro": varredura de brilho no visor LCD. */
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(600%);
+  }
+}
+
+.animate-scanline {
+  animation: scanline 3s linear infinite;
 }
 
 /* Heatmap: rampa sequencial de um único hue (o tema ativo), do neutro ao

@@ -6,7 +6,7 @@ import { z } from "zod";
 
 import { auth } from "@/auth";
 import { isValidColorMode } from "@/lib/color-mode";
-import { isValidTheme } from "@/lib/themes";
+import { isValidStyle } from "@/lib/styles";
 import { prisma } from "@/lib/prisma";
 
 export async function recordCycle(type: CycleType, durationMinutes: number) {
@@ -22,17 +22,20 @@ export async function recordCycle(type: CycleType, durationMinutes: number) {
   });
 }
 
-export async function setTheme(themeId: string) {
+// O campo no banco continua se chamando "theme" por simplicidade de
+// migração — o conceito virou "estilo" (ver lib/styles.ts), só o nome da
+// coluna ficou pra trás.
+export async function setStyle(styleId: string) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId || !isValidTheme(themeId)) {
+  if (!userId || !isValidStyle(styleId)) {
     return;
   }
 
   await prisma.user.update({
     where: { id: userId },
-    data: { theme: themeId },
+    data: { theme: styleId },
   });
 
   revalidatePath("/dashboard");

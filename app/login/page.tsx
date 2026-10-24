@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { BRAND_ACCENT } from "@/lib/styles";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { loginWithCredentials, loginWithGitHub, loginWithGoogle } from "./actions";
 
@@ -24,7 +25,12 @@ export default async function LoginPage() {
 
   return (
     <section
-      data-theme="tomato"
+      style={
+        {
+          "--accent-from": BRAND_ACCENT.from,
+          "--accent-to": BRAND_ACCENT.to,
+        } as React.CSSProperties
+      }
       className="flex flex-1 flex-col items-center justify-center gap-12 bg-[var(--background)] px-6 py-24"
     >
       <div className="flex flex-col items-center gap-3 text-center">

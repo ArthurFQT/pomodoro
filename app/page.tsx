@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { BRAND_ACCENT } from "@/lib/styles";
 import { Hero } from "@/components/landing/Hero";
 import { FeatureCard } from "@/components/landing/FeatureCard";
 import { HowItWorks } from "@/components/landing/HowItWorks";
@@ -12,9 +13,9 @@ export const instant = false;
 const FEATURES = [
   {
     icon: "⏱️",
-    title: "Timer com 5 temas",
+    title: "Timer com 4 estilos",
     description:
-      "Foco, pausa curta e pausa longa num visual que você escolhe — do tomate clássico ao oceano.",
+      "Foco, pausa curta e pausa longa num visual que você escolhe — do minimalista ao retro, com cor que muda por fase.",
   },
   {
     icon: "🔥",
@@ -45,7 +46,12 @@ export default async function Home() {
 
   return (
     <div
-      data-theme="tomato"
+      style={
+        {
+          "--accent-from": BRAND_ACCENT.from,
+          "--accent-to": BRAND_ACCENT.to,
+        } as React.CSSProperties
+      }
       className="flex flex-1 flex-col bg-[var(--background)]"
     >
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">

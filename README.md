@@ -24,7 +24,9 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 ## ⏱️ Como funciona o timer
 
-Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa, som/notificação ao concluir e auto-iniciar pausas são configuráveis na aba **Geral** de `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar um foco, o padrão é mostrar um botão único para iniciar a pausa — com "auto-iniciar pausas" ativado, a pausa começa sozinha; voltar da pausa para o foco sempre exige esse clique. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (7 opções, escolhidas na aba **Aparência** com preview de verdade de cada uma) é salvo na conta e sincroniza entre dispositivos — cada tema troca não só a cor, mas o formato do relógio: anel clássico (Tomate), gomos radiais tipo cítrico, cacho de bolinhas acendendo (Berry), água drenando (Oceano), plantinha crescendo (Floresta), um blob pastel respirando (Soft) e uma xícara de café com leite enchendo (Nata).
+Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa, som/notificação ao concluir e auto-iniciar pausas são configuráveis na aba **Geral** de `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar um foco, o padrão é mostrar um botão único para iniciar a pausa — com "auto-iniciar pausas" ativado, a pausa começa sozinha; voltar da pausa para o foco sempre exige esse clique. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak).
+
+O visual do timer tem dois eixos independentes, escolhidos na aba **Aparência** (com preview de verdade): o **estilo** — 4 formatos próprios (Minimalista: anel fino; Pastel: blob respirando; Lofi: disco de vinil girando; Retro: visor LCD com barra de progresso) — e, dentro do estilo escolhido, a **cor muda sozinha conforme a fase** (foco/pausa curta/pausa longa), sem precisar trocar de estilo pra isso.
 
 A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
 
@@ -55,7 +57,7 @@ pomodoro/
 │   ├── dashboard/        # Área autenticada (protegida pelo proxy.ts)
 │   │   ├── layout.tsx    # Shell logado: cabeçalho, nav, tema do usuário, sign out
 │   │   ├── page.tsx       # O timer Pomodoro
-│   │   ├── actions.ts     # Server Actions: recordCycle, setTheme, updateSettings
+│   │   ├── actions.ts     # Server Actions: recordCycle, setStyle, setColorMode, updateSettings
 │   │   ├── historico/     # Heatmap + streak + ciclos recentes
 │   │   └── configuracoes/  # Durações, intervalo da pausa longa, som/notificação
 │   ├── login/
@@ -65,10 +67,10 @@ pomodoro/
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
-│   ├── timer/             # PomodoroTimer, TimerFace, FullscreenToggle
-│   │   └── faces/          # Um componente por tema (7): Tomato/Citrus/Berry/Ocean/Forest/Soft/Nata
+│   ├── timer/             # PomodoroTimer, StyleFace, FullscreenToggle, ProgressRing
+│   │   └── styles/          # Um componente por estilo (4): Minimal/Pastel/Lofi/Retro
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
-│   ├── settings/            # ThemePicker, ColorModePicker + tabs/GeneralTab
+│   ├── settings/            # StylePicker, ColorModePicker + tabs/GeneralTab
 │   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider, RadioGroup
 │   ├── layout/                 # DashboardNav
 │   └── landing/                 # Hero, FeatureCard, HowItWorks
@@ -77,7 +79,7 @@ pomodoro/
 ├── lib/
 │   ├── prisma.ts         # Prisma Client (singleton)
 │   ├── pomodoro.ts        # Durações e máquina de estado das fases
-│   ├── themes.ts           # Lista de temas visuais (fonte única da verdade)
+│   ├── styles.ts           # Estilos visuais + cor por fase (fonte única da verdade)
 │   ├── color-mode.ts        # Modos de cor (Automático/Claro/Escuro/OLED)
 │   ├── heatmap.ts           # Agregação por dia, níveis de intensidade, streak
 │   ├── stats.ts              # Busca os ciclos do usuário e monta as estatísticas
@@ -133,12 +135,13 @@ npm run db:push
 
 - [x] Estrutura inicial do projeto (front + back)
 - [x] Fundação de autenticação + banco de dados (Auth.js + Prisma + Neon)
-- [x] Timer Pomodoro (foco / pausa curta / pausa longa) com 5 temas visuais
+- [x] Timer Pomodoro (foco / pausa curta / pausa longa)
 - [x] Histórico de ciclos concluídos, heatmap de ciclos por dia e streak
 - [x] Landing page de apresentação
 - [x] Configurações do timer (durações, intervalo da pausa longa, som/notificação)
 - [x] Configurações em abas (Geral/Aparência) com componentes próprios (Switch, Slider, Tabs) e auto-iniciar pausas
-- [x] Modo de cor manual (Automático/Claro/Escuro/OLED), independente do tema visual
+- [x] Modo de cor manual (Automático/Claro/Escuro/OLED), independente do estilo visual
+- [x] 4 estilos visuais com formato próprio (Minimalista/Pastel/Lofi/Retro), cor que muda por fase
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 

@@ -17,10 +17,10 @@ import {
   type PendingPhase,
   type TimerStatus,
 } from "@/lib/timer-storage";
-import type { ThemeId } from "@/lib/themes";
+import { getStyleColors, type StyleId } from "@/lib/styles";
 
 import { FullscreenToggle } from "./FullscreenToggle";
-import { TimerFace } from "./TimerFace";
+import { StyleFace } from "./StyleFace";
 
 type TimerState = {
   phase: PhaseType;
@@ -96,10 +96,10 @@ function notifyPhaseComplete(message: string) {
 type PomodoroTimerProps = {
   userId: string;
   settings: PomodoroSettings;
-  themeId: ThemeId;
+  styleId: StyleId;
 };
 
-export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps) {
+export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps) {
   const [state, setState] = useState<TimerState>(() =>
     buildInitialState(settings),
   );
@@ -355,13 +355,23 @@ export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps)
 
   const total = phaseDurations[phase];
   // secondsLeft já é 0 quando status === "completed" (ver efeitos acima) —
-  // cada face decide por conta própria como representar "concluído" no seu
-  // próprio formato (ver TomatoFace, por exemplo).
+  // cada estilo decide por conta própria como representar "concluído" no seu
+  // próprio formato (ver MinimalStyle, por exemplo).
   const progress = secondsLeft / total;
+
+  // A cor muda com a fase (foco/pausa), dentro do mesmo estilo/formato —
+  // aplicada aqui via custom property inline pra sobrescrever a cor
+  // "ambiente" (fase de foco) herdada do layout do dashboard.
+  const colors = getStyleColors(styleId, phase);
+  const colorVars = {
+    "--accent-from": colors.from,
+    "--accent-to": colors.to,
+  } as React.CSSProperties;
 
   return (
     <div
       ref={containerRef}
+      style={colorVars}
       className={`relative flex flex-col items-center gap-8 ${
         isFullscreen
           ? "timer-ambient-bg h-screen w-screen justify-center"
@@ -376,11 +386,11 @@ export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps)
           : PHASE_LABELS[phase]}
       </p>
 
-      <TimerFace themeId={themeId} progress={progress} pulsing={status === "completed"}>
-        <span className="text-5xl font-bold tabular-nums text-zinc-900 dark:text-zinc-50">
+      <StyleFace styleId={styleId} progress={progress} pulsing={status === "completed"}>
+        <span className="text-5xl font-bold tabular-nums">
           {status === "completed" ? "✓" : formatTime(secondsLeft)}
         </span>
-      </TimerFace>
+      </StyleFace>
 
       {status === "completed" && pending ? (
         <button

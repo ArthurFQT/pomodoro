@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
+import { DEFAULT_STYLE, getStyleColors, isValidStyle } from "@/lib/styles";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { DashboardNav } from "@/components/layout/DashboardNav";
 
@@ -36,10 +36,22 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  const theme = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
+  const styleId = isValidStyle(user.theme) ? user.theme : DEFAULT_STYLE;
+  // Cor "ambiente" do estilo fora da tela do timer (cabeçalho, histórico) —
+  // usa a cor de foco como representante; a página do timer sobrescreve
+  // isso com a cor da fase atual (ver PomodoroTimer.tsx).
+  const ambientColors = getStyleColors(styleId, "FOCUS");
 
   return (
-    <div data-theme={theme} className="flex flex-1 flex-col bg-[var(--background)]">
+    <div
+      style={
+        {
+          "--accent-from": ambientColors.from,
+          "--accent-to": ambientColors.to,
+        } as React.CSSProperties
+      }
+      className="flex flex-1 flex-col bg-[var(--background)]"
+    >
       <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-6">
           <span className="bg-gradient-to-br from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-lg font-extrabold tracking-tight text-transparent">
