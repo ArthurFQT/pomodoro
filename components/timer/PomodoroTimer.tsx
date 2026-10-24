@@ -19,6 +19,7 @@ import {
 } from "@/lib/timer-storage";
 import type { ThemeId } from "@/lib/themes";
 
+import { FullscreenToggle } from "./FullscreenToggle";
 import { TimerFace } from "./TimerFace";
 
 type TimerState = {
@@ -106,6 +107,26 @@ export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps)
     state;
 
   const phaseDurations = getPhaseDurations(settings);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    function handleFullscreenChange() {
+      setIsFullscreen(document.fullscreenElement === containerRef.current);
+    }
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  function toggleFullscreen() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    } else {
+      containerRef.current?.requestFullscreen().catch(() => {});
+    }
+  }
 
   const completeRef = useRef<() => void>(() => {});
 
@@ -309,7 +330,16 @@ export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps)
   const progress = secondsLeft / total;
 
   return (
-    <div className="flex flex-col items-center gap-8">
+    <div
+      ref={containerRef}
+      className={`relative flex flex-col items-center gap-8 ${
+        isFullscreen
+          ? "timer-ambient-bg h-screen w-screen justify-center"
+          : ""
+      }`}
+    >
+      <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
+
       <p className="text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
         {status === "completed"
           ? `${PHASE_LABELS[phase]} concluído`
