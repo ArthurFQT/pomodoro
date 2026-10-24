@@ -20,6 +20,14 @@ model User {
   // para não exigir migration a cada novo tema adicionado.
   theme         String    @default("tomato")
 
+  // Configurações do timer Pomodoro (em minutos).
+  focusMinutes         Int     @default(25)
+  shortBreakMinutes    Int     @default(5)
+  longBreakMinutes     Int     @default(15)
+  longBreakInterval    Int     @default(4)
+  soundEnabled         Boolean @default(true)
+  notificationsEnabled Boolean @default(true)
+
   accounts Account[]
   sessions Session[]
   cycles   Cycle[]

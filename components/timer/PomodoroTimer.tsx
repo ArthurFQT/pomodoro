@@ -5,10 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { recordCycle } from "@/app/dashboard/actions";
 import {
   NEXT_PHASE_LABELS,
-  PHASE_DURATIONS,
   PHASE_LABELS,
   advancePhase,
+  getPhaseDurations,
   type PhaseType,
+  type PomodoroSettings,
 } from "@/lib/pomodoro";
 import {
   loadTimerState,
@@ -29,15 +30,17 @@ type TimerState = {
   hydrated: boolean;
 };
 
-const INITIAL_STATE: TimerState = {
-  phase: "FOCUS",
-  focusCount: 0,
-  secondsLeft: PHASE_DURATIONS.FOCUS,
-  status: "idle",
-  phaseEndsAt: null,
-  pending: null,
-  hydrated: false,
-};
+function buildInitialState(settings: PomodoroSettings): TimerState {
+  return {
+    phase: "FOCUS",
+    focusCount: 0,
+    secondsLeft: getPhaseDurations(settings).FOCUS,
+    status: "idle",
+    phaseEndsAt: null,
+    pending: null,
+    hydrated: false,
+  };
+}
 
 function formatTime(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60)
@@ -90,12 +93,17 @@ function notifyPhaseComplete(message: string) {
 
 type PomodoroTimerProps = {
   userId: string;
+  settings: PomodoroSettings;
 };
 
-export function PomodoroTimer({ userId }: PomodoroTimerProps) {
-  const [state, setState] = useState<TimerState>(INITIAL_STATE);
+export function PomodoroTimer({ userId, settings }: PomodoroTimerProps) {
+  const [state, setState] = useState<TimerState>(() =>
+    buildInitialState(settings),
+  );
   const { phase, focusCount, secondsLeft, status, phaseEndsAt, pending, hydrated } =
     state;
+
+  const phaseDurations = getPhaseDurations(settings);
 
   const completeRef = useRef<() => void>(() => {});
 
@@ -104,7 +112,11 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
   // renderização, que o React proíbe).
   useEffect(() => {
     completeRef.current = () => {
-      const { nextPhase, nextFocusCount } = advancePhase(phase, focusCount);
+      const { nextPhase, nextFocusCount } = advancePhase(
+        phase,
+        focusCount,
+        settings.longBreakInterval,
+      );
 
       setState((prev) => ({
         ...prev,
@@ -114,15 +126,17 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
         pending: { phase: nextPhase, focusCount: nextFocusCount },
       }));
 
-      recordCycle(phase, Math.round(PHASE_DURATIONS[phase] / 60)).catch(
+      recordCycle(phase, Math.round(phaseDurations[phase] / 60)).catch(
         () => {},
       );
-      playChime();
-      notifyPhaseComplete(
-        `${PHASE_LABELS[phase]} concluído. Hora de ${NEXT_PHASE_LABELS[
-          nextPhase
-        ].toLowerCase()}.`,
-      );
+      if (settings.soundEnabled) playChime();
+      if (settings.notificationsEnabled) {
+        notifyPhaseComplete(
+          `${PHASE_LABELS[phase]} concluído. Hora de ${NEXT_PHASE_LABELS[
+            nextPhase
+          ].toLowerCase()}.`,
+        );
+      }
     };
   });
 
@@ -158,6 +172,7 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
         const { nextPhase, nextFocusCount } = advancePhase(
           saved.phase,
           saved.focusCount,
+          settings.longBreakInterval,
         );
         setState({
           phase: saved.phase,
@@ -170,20 +185,30 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
         });
         recordCycle(
           saved.phase,
-          Math.round(PHASE_DURATIONS[saved.phase] / 60),
+          Math.round(phaseDurations[saved.phase] / 60),
         ).catch(() => {});
       }
     } else {
+      // "idle" não tem contagem parcial a preservar — usa sempre a duração
+      // atual das configurações (senão uma mudança de configuração não
+      // apareceria até a próxima fase, já que o valor salvo ficaria preso
+      // no antigo). "paused"/"completed" preservam o valor exato salvo.
+      const secondsLeft =
+        saved.status === "idle"
+          ? phaseDurations[saved.phase]
+          : saved.secondsLeft;
+
       setState({
         phase: saved.phase,
         focusCount: saved.focusCount,
-        secondsLeft: saved.secondsLeft,
+        secondsLeft,
         status: saved.status,
         phaseEndsAt: saved.phaseEndsAt,
         pending: saved.pending,
         hydrated: true,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -222,7 +247,7 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
   }, [status, phaseEndsAt]);
 
   function handleStart() {
-    ensureNotificationPermission();
+    if (settings.notificationsEnabled) ensureNotificationPermission();
     setState((prev) => ({
       ...prev,
       status: "running",
@@ -246,12 +271,13 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
       const { nextPhase, nextFocusCount } = advancePhase(
         prev.phase,
         prev.focusCount,
+        settings.longBreakInterval,
       );
       return {
         ...prev,
         phase: nextPhase,
         focusCount: nextFocusCount,
-        secondsLeft: PHASE_DURATIONS[nextPhase],
+        secondsLeft: phaseDurations[nextPhase],
         phaseEndsAt: null,
         status: "idle",
       };
@@ -261,7 +287,7 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
   function handleConfirmNext() {
     setState((prev) => {
       if (!prev.pending) return prev;
-      const duration = PHASE_DURATIONS[prev.pending.phase];
+      const duration = phaseDurations[prev.pending.phase];
       return {
         ...prev,
         phase: prev.pending.phase,
@@ -274,7 +300,7 @@ export function PomodoroTimer({ userId }: PomodoroTimerProps) {
     });
   }
 
-  const total = PHASE_DURATIONS[phase];
+  const total = phaseDurations[phase];
   const progress = status === "completed" ? 1 : secondsLeft / total;
 
   return (
