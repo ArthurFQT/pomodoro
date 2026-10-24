@@ -7,6 +7,7 @@ export type PomodoroSettings = {
   longBreakInterval: number;
   soundEnabled: boolean;
   notificationsEnabled: boolean;
+  autoStartBreaks: boolean;
 };
 
 export const DEFAULT_SETTINGS: PomodoroSettings = {
@@ -16,6 +17,7 @@ export const DEFAULT_SETTINGS: PomodoroSettings = {
   longBreakInterval: 4,
   soundEnabled: true,
   notificationsEnabled: true,
+  autoStartBreaks: false,
 };
 
 export const PHASE_LABELS: Record<PhaseType, string> = {

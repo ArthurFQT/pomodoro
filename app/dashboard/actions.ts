@@ -44,6 +44,7 @@ const settingsSchema = z.object({
   longBreakInterval: z.coerce.number().int().min(1).max(12),
   soundEnabled: z.coerce.boolean(),
   notificationsEnabled: z.coerce.boolean(),
+  autoStartBreaks: z.coerce.boolean(),
 });
 
 export type SettingsFormState = { ok: boolean; message: string } | undefined;
@@ -66,6 +67,7 @@ export async function updateSettings(
     longBreakInterval: formData.get("longBreakInterval"),
     soundEnabled: formData.get("soundEnabled"),
     notificationsEnabled: formData.get("notificationsEnabled"),
+    autoStartBreaks: formData.get("autoStartBreaks"),
   });
 
   if (!parsed.success) {

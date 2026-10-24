@@ -24,7 +24,7 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 ## ⏱️ Como funciona o timer
 
-Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa e o som/notificação ao concluir são configuráveis em `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar uma etapa, mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (7 opções, escolhidas em `/dashboard/configuracoes` com preview de verdade de cada uma) é salvo na conta e sincroniza entre dispositivos — cada tema troca não só a cor, mas o formato do relógio: anel clássico (Tomate), gomos radiais tipo cítrico, cacho de bolinhas acendendo (Berry), água drenando (Oceano), plantinha crescendo (Floresta), um blob pastel respirando (Soft) e uma xícara de café com leite enchendo (Nata).
+Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa, som/notificação ao concluir e auto-iniciar pausas são configuráveis na aba **Geral** de `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar um foco, o padrão é mostrar um botão único para iniciar a pausa — com "auto-iniciar pausas" ativado, a pausa começa sozinha; voltar da pausa para o foco sempre exige esse clique. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (7 opções, escolhidas na aba **Aparência** com preview de verdade de cada uma) é salvo na conta e sincroniza entre dispositivos — cada tema troca não só a cor, mas o formato do relógio: anel clássico (Tomate), gomos radiais tipo cítrico, cacho de bolinhas acendendo (Berry), água drenando (Oceano), plantinha crescendo (Floresta), um blob pastel respirando (Soft) e uma xícara de café com leite enchendo (Nata).
 
 A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
 
@@ -64,9 +64,10 @@ pomodoro/
 │   ├── timer/             # PomodoroTimer, TimerFace, FullscreenToggle
 │   │   └── faces/          # Um componente por tema (7): Tomato/Citrus/Berry/Ocean/Forest/Soft/Nata
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
-│   ├── settings/            # SettingsForm, ThemePicker (com preview de cada tema)
-│   ├── layout/               # DashboardNav
-│   └── landing/               # Hero, FeatureCard, HowItWorks
+│   ├── settings/            # ThemePicker (com preview de cada tema) + tabs/GeneralTab
+│   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider
+│   ├── layout/                 # DashboardNav
+│   └── landing/                 # Hero, FeatureCard, HowItWorks
 ├── prisma/
 │   └── schema.prisma     # Modelos: User (com theme), Account, Session, Cycle...
 ├── lib/
@@ -131,6 +132,7 @@ npm run db:push
 - [x] Histórico de ciclos concluídos, heatmap de ciclos por dia e streak
 - [x] Landing page de apresentação
 - [x] Configurações do timer (durações, intervalo da pausa longa, som/notificação)
+- [x] Configurações em abas (Geral/Aparência) com componentes próprios (Switch, Slider, Tabs) e auto-iniciar pausas
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 
