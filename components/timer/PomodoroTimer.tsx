@@ -17,8 +17,9 @@ import {
   type PendingPhase,
   type TimerStatus,
 } from "@/lib/timer-storage";
+import type { ThemeId } from "@/lib/themes";
 
-import { ProgressRing } from "./ProgressRing";
+import { TimerFace } from "./TimerFace";
 
 type TimerState = {
   phase: PhaseType;
@@ -94,9 +95,10 @@ function notifyPhaseComplete(message: string) {
 type PomodoroTimerProps = {
   userId: string;
   settings: PomodoroSettings;
+  themeId: ThemeId;
 };
 
-export function PomodoroTimer({ userId, settings }: PomodoroTimerProps) {
+export function PomodoroTimer({ userId, settings, themeId }: PomodoroTimerProps) {
   const [state, setState] = useState<TimerState>(() =>
     buildInitialState(settings),
   );
@@ -301,7 +303,10 @@ export function PomodoroTimer({ userId, settings }: PomodoroTimerProps) {
   }
 
   const total = phaseDurations[phase];
-  const progress = status === "completed" ? 1 : secondsLeft / total;
+  // secondsLeft já é 0 quando status === "completed" (ver efeitos acima) —
+  // cada face decide por conta própria como representar "concluído" no seu
+  // próprio formato (ver TomatoFace, por exemplo).
+  const progress = secondsLeft / total;
 
   return (
     <div className="flex flex-col items-center gap-8">
@@ -311,14 +316,11 @@ export function PomodoroTimer({ userId, settings }: PomodoroTimerProps) {
           : PHASE_LABELS[phase]}
       </p>
 
-      <ProgressRing
-        progress={progress}
-        className={status === "completed" ? "animate-pulse-glow" : undefined}
-      >
+      <TimerFace themeId={themeId} progress={progress} pulsing={status === "completed"}>
         <span className="text-5xl font-bold tabular-nums text-zinc-900 dark:text-zinc-50">
           {status === "completed" ? "✓" : formatTime(secondsLeft)}
         </span>
-      </ProgressRing>
+      </TimerFace>
 
       {status === "completed" && pending ? (
         <button

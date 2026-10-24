@@ -67,6 +67,37 @@ body {
   animation: pulse-glow 1.6s ease-in-out infinite;
 }
 
+/* Face "oceano" do timer: deriva horizontal da onda na superfície da água. */
+@keyframes wave-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-140px);
+  }
+}
+
+.animate-wave-drift {
+  animation: wave-drift 3s linear infinite;
+}
+
+/* Face "floresta" do timer: leve balanço das folhas. */
+@keyframes leaf-sway {
+  0%,
+  100% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+
+.animate-leaf-sway {
+  animation: leaf-sway 2.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: bottom center;
+}
+
 /* Heatmap: rampa sequencial de um único hue (o tema ativo), do neutro ao
    accent — nível 0 é o "vazio", nível 4 é o accent puro. */
 :root {
