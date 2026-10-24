@@ -1,10 +1,10 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_COLOR_MODE, isValidColorMode } from "@/lib/color-mode";
-import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
+import { DEFAULT_STYLE, isValidStyle } from "@/lib/styles";
 import { ColorModePicker } from "@/components/settings/ColorModePicker";
 import { GeneralTab } from "@/components/settings/tabs/GeneralTab";
-import { ThemePicker } from "@/components/settings/ThemePicker";
+import { StylePicker } from "@/components/settings/StylePicker";
 import { Tabs } from "@/components/ui/Tabs";
 
 // A sessão e as configurações são lidas a cada requisição — não pode ser
@@ -38,7 +38,7 @@ export default async function ConfiguracoesPage() {
     return null;
   }
 
-  const currentTheme = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
+  const currentStyle = isValidStyle(user.theme) ? user.theme : DEFAULT_STYLE;
   const currentColorMode = isValidColorMode(user.colorMode)
     ? user.colorMode
     : DEFAULT_COLOR_MODE;
@@ -58,7 +58,7 @@ export default async function ConfiguracoesPage() {
             content: (
               <div className="flex flex-col gap-10">
                 <ColorModePicker currentColorMode={currentColorMode} />
-                <ThemePicker currentTheme={currentTheme} />
+                <StylePicker currentStyle={currentStyle} />
               </div>
             ),
           },

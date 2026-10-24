@@ -4,8 +4,8 @@ const STEPS = [
     description: "Com Google, GitHub ou e-mail e senha — leva menos de um minuto.",
   },
   {
-    title: "Escolha um tema",
-    description: "Cinco opções de cor pra deixar o timer com a sua cara.",
+    title: "Escolha um estilo",
+    description: "Quatro formatos de timer, com cor que muda por fase.",
   },
   {
     title: "Comece a focar",
