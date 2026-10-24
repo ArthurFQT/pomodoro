@@ -79,12 +79,14 @@ export function playAlarm(sound: AlarmSound, volume: number) {
 
 // Estado do ruído ambiente contínuo — um player por vez, controlado por
 // start/stop/setVolume (ver PomodoroTimer.tsx: liga enquanto o timer está
-// rodando, desliga ao pausar/pular/concluir).
+// rodando, desliga ao pausar/pular/concluir). Tudo passa por noiseGain (o
+// "mestre"), então o volume se aplica igual pra qualquer um dos tipos.
 let noiseCtx: AudioContext | null = null;
-let noiseSource: AudioBufferSourceNode | null = null;
 let noiseGain: GainNode | null = null;
+let noiseNodes: AudioNode[] = [];
+let noiseIntervalId: ReturnType<typeof setInterval> | null = null;
 
-function createNoiseBuffer(ctx: AudioContext, type: "white" | "pink", durationSeconds = 2) {
+function createNoiseBuffer(ctx: AudioContext, type: "white" | "pink", durationSeconds = 3) {
   const bufferSize = Math.floor(ctx.sampleRate * durationSeconds);
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
@@ -118,6 +120,160 @@ function createNoiseBuffer(ctx: AudioContext, type: "white" | "pink", durationSe
   return buffer;
 }
 
+function startLoopingNoise(ctx: AudioContext, destination: AudioNode, type: "white" | "pink") {
+  const source = ctx.createBufferSource();
+  source.buffer = createNoiseBuffer(ctx, type);
+  source.loop = true;
+  source.connect(destination);
+  source.start();
+  noiseNodes.push(source);
+}
+
+/** Chuva: ruído branco filtrado (grave de mais e agudo de mais cortados)
+ * como um "chiado" constante, mais pingos ocasionais — um tom agudo curto
+ * com ataque rápido, em intervalos aleatórios. */
+function setupRain(ctx: AudioContext, destination: AudioNode) {
+  const source = ctx.createBufferSource();
+  source.buffer = createNoiseBuffer(ctx, "white");
+  source.loop = true;
+
+  const highpass = ctx.createBiquadFilter();
+  highpass.type = "highpass";
+  highpass.frequency.value = 400;
+
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.type = "lowpass";
+  lowpass.frequency.value = 3000;
+
+  const bedGain = ctx.createGain();
+  bedGain.gain.value = 0.6;
+
+  source.connect(highpass);
+  highpass.connect(lowpass);
+  lowpass.connect(bedGain);
+  bedGain.connect(destination);
+  source.start();
+  noiseNodes.push(source, highpass, lowpass, bedGain);
+
+  function scheduleDrop() {
+    if (!noiseCtx) return;
+    const now = noiseCtx.currentTime;
+    const drop = noiseCtx.createOscillator();
+    drop.type = "sine";
+    drop.frequency.value = 1200 + Math.random() * 800;
+
+    const dropGain = noiseCtx.createGain();
+    dropGain.gain.setValueAtTime(0.0001, now);
+    dropGain.gain.exponentialRampToValueAtTime(0.15, now + 0.005);
+    dropGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+
+    drop.connect(dropGain);
+    dropGain.connect(destination);
+    drop.start(now);
+    drop.stop(now + 0.1);
+  }
+
+  noiseIntervalId = setInterval(scheduleDrop, 200 + Math.random() * 200);
+}
+
+/** Floresta: ruído branco bem filtrado (só os graves) como um vento suave
+ * de fundo, mais "piados" ocasionais — um tom agudo com um pequeno glide
+ * de frequência pra cima, em intervalos aleatórios e espaçados. */
+function setupForest(ctx: AudioContext, destination: AudioNode) {
+  const source = ctx.createBufferSource();
+  source.buffer = createNoiseBuffer(ctx, "white");
+  source.loop = true;
+
+  const lowpass = ctx.createBiquadFilter();
+  lowpass.type = "lowpass";
+  lowpass.frequency.value = 500;
+
+  const bedGain = ctx.createGain();
+  bedGain.gain.value = 0.5;
+
+  source.connect(lowpass);
+  lowpass.connect(bedGain);
+  bedGain.connect(destination);
+  source.start();
+  noiseNodes.push(source, lowpass, bedGain);
+
+  function scheduleChirp() {
+    if (!noiseCtx) return;
+    const now = noiseCtx.currentTime;
+    const startFreq = 1800 + Math.random() * 800;
+
+    const chirp = noiseCtx.createOscillator();
+    chirp.type = "sine";
+    chirp.frequency.setValueAtTime(startFreq, now);
+    chirp.frequency.exponentialRampToValueAtTime(startFreq * 1.4, now + 0.12);
+
+    const chirpGain = noiseCtx.createGain();
+    chirpGain.gain.setValueAtTime(0.0001, now);
+    chirpGain.gain.exponentialRampToValueAtTime(0.1, now + 0.02);
+    chirpGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+
+    chirp.connect(chirpGain);
+    chirpGain.connect(destination);
+    chirp.start(now);
+    chirp.stop(now + 0.2);
+  }
+
+  noiseIntervalId = setInterval(
+    () => {
+      if (Math.random() < 0.6) scheduleChirp();
+    },
+    1800 + Math.random() * 2200,
+  );
+}
+
+/** Espaço: dois osciladores graves levemente dessintonizados, formando um
+ * drone contínuo com um batimento lento, mais "brilhos" agudos esparsos. */
+function setupSpace(ctx: AudioContext, destination: AudioNode) {
+  const oscillatorA = ctx.createOscillator();
+  oscillatorA.type = "triangle";
+  oscillatorA.frequency.value = 80;
+
+  const oscillatorB = ctx.createOscillator();
+  oscillatorB.type = "triangle";
+  oscillatorB.frequency.value = 80.6;
+
+  const droneGain = ctx.createGain();
+  droneGain.gain.value = 0.35;
+
+  oscillatorA.connect(droneGain);
+  oscillatorB.connect(droneGain);
+  droneGain.connect(destination);
+  oscillatorA.start();
+  oscillatorB.start();
+  noiseNodes.push(oscillatorA, oscillatorB, droneGain);
+
+  function scheduleTwinkle() {
+    if (!noiseCtx) return;
+    const now = noiseCtx.currentTime;
+
+    const twinkle = noiseCtx.createOscillator();
+    twinkle.type = "sine";
+    twinkle.frequency.value = 1500 + Math.random() * 2000;
+
+    const twinkleGain = noiseCtx.createGain();
+    twinkleGain.gain.setValueAtTime(0.0001, now);
+    twinkleGain.gain.exponentialRampToValueAtTime(0.06, now + 0.05);
+    twinkleGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+
+    twinkle.connect(twinkleGain);
+    twinkleGain.connect(destination);
+    twinkle.start(now);
+    twinkle.stop(now + 1.3);
+  }
+
+  noiseIntervalId = setInterval(
+    () => {
+      if (Math.random() < 0.5) scheduleTwinkle();
+    },
+    2500 + Math.random() * 3000,
+  );
+}
+
 export function startAmbientNoise(type: Exclude<AmbientNoise, "none">, volume: number) {
   stopAmbientNoise();
 
@@ -125,21 +281,29 @@ export function startAmbientNoise(type: Exclude<AmbientNoise, "none">, volume: n
   if (!ctx) return;
 
   try {
-    const buffer = createNoiseBuffer(ctx, type);
-    const source = ctx.createBufferSource();
-    source.buffer = buffer;
-    source.loop = true;
-
-    const gain = ctx.createGain();
-    gain.gain.value = (Math.max(0, Math.min(100, volume)) / 100) * 0.25;
-
-    source.connect(gain);
-    gain.connect(ctx.destination);
-    source.start();
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = (Math.max(0, Math.min(100, volume)) / 100) * 0.25;
+    masterGain.connect(ctx.destination);
 
     noiseCtx = ctx;
-    noiseSource = source;
-    noiseGain = gain;
+    noiseGain = masterGain;
+    noiseNodes = [];
+
+    switch (type) {
+      case "white":
+      case "pink":
+        startLoopingNoise(ctx, masterGain, type);
+        break;
+      case "rain":
+        setupRain(ctx, masterGain);
+        break;
+      case "forest":
+        setupForest(ctx, masterGain);
+        break;
+      case "space":
+        setupSpace(ctx, masterGain);
+        break;
+    }
   } catch {
     // Web Audio indisponível — segue sem ruído ambiente.
   }
@@ -152,15 +316,23 @@ export function setAmbientNoiseVolume(volume: number) {
 }
 
 export function stopAmbientNoise() {
-  if (noiseSource) {
+  if (noiseIntervalId !== null) {
+    clearInterval(noiseIntervalId);
+    noiseIntervalId = null;
+  }
+
+  for (const node of noiseNodes) {
     try {
-      noiseSource.stop();
+      if (typeof (node as Partial<AudioScheduledSourceNode>).stop === "function") {
+        (node as AudioScheduledSourceNode).stop();
+      }
     } catch {
       // já parado.
     }
-    noiseSource.disconnect();
-    noiseSource = null;
+    node.disconnect();
   }
+  noiseNodes = [];
+
   if (noiseGain) {
     noiseGain.disconnect();
     noiseGain = null;
