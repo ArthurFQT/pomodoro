@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { auth } from "@/auth";
+import { isValidColorMode } from "@/lib/color-mode";
 import { isValidTheme } from "@/lib/themes";
 import { prisma } from "@/lib/prisma";
 
@@ -35,6 +36,24 @@ export async function setTheme(themeId: string) {
   });
 
   revalidatePath("/dashboard");
+}
+
+export async function setColorMode(colorMode: string) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId || !isValidColorMode(colorMode)) {
+    return;
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { colorMode },
+  });
+
+  // O modo de cor é resolvido no layout raiz — afeta o app inteiro, não só
+  // a área logada.
+  revalidatePath("/", "layout");
 }
 
 const settingsSchema = z.object({

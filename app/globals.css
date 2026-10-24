@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Modo de cor por classe em <html> (ver lib/color-mode.ts e app/layout.tsx)
+   em vez de só @media (prefers-color-scheme) — permite Claro/Escuro/OLED
+   escolhidos manualmente, com "Automático" resolvido por um script
+   anti-flash no layout raiz. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #fafafa;
   --foreground: #171717;
@@ -12,11 +18,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b;
-    --foreground: #ededed;
-  }
+:root.dark {
+  --background: #09090b;
+  --foreground: #ededed;
+}
+
+/* OLED: mesma paleta do Escuro, só o fundo vira preto puro. */
+:root.oled {
+  --background: #000000;
 }
 
 body {
@@ -176,12 +185,10 @@ body {
   --slider-track: #e4e4e7;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --heatmap-cell-0: #27272a;
-    --switch-off: #3f3f46;
-    --slider-track: #3f3f46;
-  }
+:root.dark {
+  --heatmap-cell-0: #27272a;
+  --switch-off: #3f3f46;
+  --slider-track: #3f3f46;
 }
 
 /* Slider customizado (componentes/ui/Slider.tsx): input[type=range] nativo

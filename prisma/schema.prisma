@@ -19,6 +19,8 @@ model User {
   // Id de um tema em lib/themes.ts. String livre (não enum do Postgres)
   // para não exigir migration a cada novo tema adicionado.
   theme         String    @default("tomato")
+  // "system" | "light" | "dark" | "oled" — ver lib/color-mode.ts.
+  colorMode     String    @default("system")
 
   // Configurações do timer Pomodoro (em minutos).
   focusMinutes         Int     @default(25)

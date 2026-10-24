@@ -17,7 +17,7 @@ export default async function RegisterPage() {
   return (
     <section
       data-theme="tomato"
-      className="flex flex-1 flex-col items-center justify-center gap-12 bg-zinc-50 px-6 py-24 dark:bg-zinc-950"
+      className="flex flex-1 flex-col items-center justify-center gap-12 bg-[var(--background)] px-6 py-24"
     >
       <div className="flex flex-col items-center gap-3 text-center">
         <span className="text-xs font-semibold tracking-widest text-[var(--accent-to)] uppercase">

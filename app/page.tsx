@@ -46,7 +46,7 @@ export default async function Home() {
   return (
     <div
       data-theme="tomato"
-      className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950"
+      className="flex flex-1 flex-col bg-[var(--background)]"
     >
       <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-6">
         <span className="text-lg font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
