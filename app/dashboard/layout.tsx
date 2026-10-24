@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -19,15 +20,24 @@ export default async function DashboardLayout({
   const session = await auth();
   const userId = session?.user?.id;
 
-  const user = userId
-    ? await prisma.user.findUnique({
-        where: { id: userId },
-        select: { theme: true },
-      })
-    : null;
+  if (!userId) {
+    redirect("/login");
+  }
 
-  const theme =
-    user?.theme && isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { theme: true },
+  });
+
+  if (!user) {
+    // Defesa extra: o callback session() em auth.ts já invalida sessões
+    // cujo usuário não existe mais no banco (userId viraria undefined
+    // acima), mas cobre também uma eventual condição de corrida entre
+    // as duas consultas.
+    redirect("/login");
+  }
+
+  const theme = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
 
   return (
     <div data-theme={theme} className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
