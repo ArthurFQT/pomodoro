@@ -1,5 +1,8 @@
+import { cookies } from "next/headers";
+
 import { auth } from "@/auth";
 import { getCycleStats } from "@/lib/stats";
+import { TIMEZONE_COOKIE, resolveTimeZone } from "@/lib/timezone";
 import { Heatmap } from "@/components/history/Heatmap";
 import { StreakTile } from "@/components/history/StreakTile";
 import { RecentCyclesList } from "@/components/history/RecentCyclesList";
@@ -16,8 +19,11 @@ export default async function HistoricoPage() {
     return null;
   }
 
+  const cookieStore = await cookies();
+  const timeZone = resolveTimeZone(cookieStore.get(TIMEZONE_COOKIE)?.value);
+
   const { heatmapWeeks, streak, totalFocusCycles, recent } =
-    await getCycleStats(userId);
+    await getCycleStats(userId, timeZone);
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-10">
@@ -38,7 +44,7 @@ export default async function HistoricoPage() {
         <h2 className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">
           Ciclos recentes
         </h2>
-        <RecentCyclesList cycles={recent} />
+        <RecentCyclesList cycles={recent} timeZone={timeZone} />
       </section>
     </div>
   );

@@ -6,17 +6,18 @@ type RecentCycle = {
 
 type RecentCyclesListProps = {
   cycles: RecentCycle[];
+  timeZone: string;
 };
 
-const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
-  day: "2-digit",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "UTC",
-});
+export function RecentCyclesList({ cycles, timeZone }: RecentCyclesListProps) {
+  const dateTimeFormatter = new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone,
+  });
 
-export function RecentCyclesList({ cycles }: RecentCyclesListProps) {
   if (cycles.length === 0) {
     return (
       <p className="text-sm text-zinc-500 dark:text-zinc-500">

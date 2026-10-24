@@ -32,6 +32,10 @@ O visual do timer tem dois eixos independentes, escolhidos na aba **Aparência**
 
 A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
 
+Enquanto uma sessão está em andamento, o título da aba e o favicon mostram o tempo restante e o progresso — útil pra acompanhar numa aba em segundo plano. Atalhos de teclado globais: **Espaço** inicia/pausa, **P** pula a etapa, **F** alterna tela cheia e **B** abre o **brain dump** — um bloco de notas rápido (guardado no navegador) pra anotar o que te distraiu sem sair do timer.
+
+O histórico/heatmap/streak agrupam os ciclos pelo **fuso horário do navegador** (detectado automaticamente), não em UTC — um dia só conta como "ativo" de acordo com o relógio local de quem usou o app.
+
 ## 🌓 Modo de cor
 
 Além do tema visual, a aba **Aparência** tem um seletor de modo de cor independente: Automático (segue o sistema operacional), Claro, Escuro e OLED (igual ao Escuro, mas com o fundo em preto puro, pensado pra telas OLED). É resolvido no servidor a partir da conta (sem flash de tela errada no carregamento) e, no modo Automático, um pequeno script decide claro/escuro pela preferência do sistema antes da primeira pintura da página.
@@ -69,8 +73,9 @@ pomodoro/
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
-│   ├── timer/             # PomodoroTimer, StyleFace, FullscreenToggle, ProgressRing
+│   ├── timer/             # PomodoroTimer, StyleFace, FullscreenToggle, ProgressRing, BrainDump
 │   │   └── styles/          # Um componente por estilo (4): Minimal/Pastel/Lofi/Retro
+│   ├── TimezoneSync.tsx     # Detecta o fuso horário do navegador e guarda num cookie
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
 │   ├── settings/            # StylePicker, ColorModePicker + tabs/GeneralTab/SoundsTab
 │   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider, RadioGroup, Select
@@ -85,9 +90,12 @@ pomodoro/
 │   ├── color-mode.ts        # Modos de cor (Automático/Claro/Escuro/OLED)
 │   ├── sound.ts              # Sons de alarme e ruídos ambiente (ids e labels)
 │   ├── audio-engine.ts        # Geração de áudio via Web Audio API (client-only)
-│   ├── heatmap.ts              # Agregação por dia, níveis de intensidade, streak
-│   ├── stats.ts                # Busca os ciclos do usuário e monta as estatísticas
-│   └── timer-storage.ts         # Persiste o timer em andamento no localStorage
+│   ├── favicon.ts              # Favicon de progresso durante o timer (client-only)
+│   ├── timezone.ts              # Resolve/valida o fuso horário do cookie
+│   ├── heatmap.ts                # Agregação por dia (no fuso do usuário), streak
+│   ├── stats.ts                  # Busca os ciclos do usuário e monta as estatísticas
+│   ├── brain-dump-storage.ts      # Anotações do brain dump no localStorage
+│   └── timer-storage.ts            # Persiste o timer em andamento no localStorage
 ├── auth.ts                # Config completa do Auth.js (providers, Prisma adapter)
 ├── auth.config.ts         # Config "leve" usada pelo proxy.ts (protege rotas)
 ├── proxy.ts                # Protege /dashboard (substitui middleware.ts no Next 16)
@@ -147,6 +155,7 @@ npm run db:push
 - [x] Modo de cor manual (Automático/Claro/Escuro/OLED), independente do estilo visual
 - [x] 4 estilos visuais com formato próprio (Minimalista/Pastel/Lofi/Retro), cor que muda por fase
 - [x] Aba Sons: alarme com 4 opções + prévia, volume, ruído ambiente (branco/rosa) durante o foco
+- [x] Fuso horário real no histórico/heatmap/streak, título/favicon dinâmicos, atalhos de teclado, brain dump
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 
