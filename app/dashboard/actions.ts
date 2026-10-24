@@ -2,6 +2,7 @@
 
 import type { CycleType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
 import { auth } from "@/auth";
 import { isValidTheme } from "@/lib/themes";
@@ -34,4 +35,50 @@ export async function setTheme(themeId: string) {
   });
 
   revalidatePath("/dashboard");
+}
+
+const settingsSchema = z.object({
+  focusMinutes: z.coerce.number().int().min(1).max(180),
+  shortBreakMinutes: z.coerce.number().int().min(1).max(180),
+  longBreakMinutes: z.coerce.number().int().min(1).max(180),
+  longBreakInterval: z.coerce.number().int().min(1).max(12),
+  soundEnabled: z.coerce.boolean(),
+  notificationsEnabled: z.coerce.boolean(),
+});
+
+export type SettingsFormState = { ok: boolean; message: string } | undefined;
+
+export async function updateSettings(
+  _prevState: SettingsFormState,
+  formData: FormData,
+): Promise<SettingsFormState> {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return { ok: false, message: "Você precisa estar logado." };
+  }
+
+  const parsed = settingsSchema.safeParse({
+    focusMinutes: formData.get("focusMinutes"),
+    shortBreakMinutes: formData.get("shortBreakMinutes"),
+    longBreakMinutes: formData.get("longBreakMinutes"),
+    longBreakInterval: formData.get("longBreakInterval"),
+    soundEnabled: formData.get("soundEnabled"),
+    notificationsEnabled: formData.get("notificationsEnabled"),
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Verifique os valores informados." };
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: parsed.data,
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/configuracoes");
+
+  return { ok: true, message: "Configurações salvas." };
 }

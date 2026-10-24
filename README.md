@@ -24,7 +24,7 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 ## ⏱️ Como funciona o timer
 
-Foco de 25 minutos → pausa curta de 5 minutos, repetindo; a cada 4 focos, uma pausa longa de 15 minutos. Ao terminar uma etapa, toca um aviso sonoro/notificação e mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak futuros). O tema visual (5 opções) é salvo na conta e sincroniza entre dispositivos.
+Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa e o som/notificação ao concluir são configuráveis em `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar uma etapa, mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (5 opções) é salvo na conta e sincroniza entre dispositivos.
 
 ## 🛠️ Stack
 
@@ -49,8 +49,9 @@ pomodoro/
 │   ├── dashboard/        # Área autenticada (protegida pelo proxy.ts)
 │   │   ├── layout.tsx    # Shell logado: cabeçalho, nav, tema do usuário, sign out
 │   │   ├── page.tsx       # O timer Pomodoro
-│   │   ├── actions.ts     # Server Actions: recordCycle, setTheme
-│   │   └── historico/     # Heatmap + streak + ciclos recentes
+│   │   ├── actions.ts     # Server Actions: recordCycle, setTheme, updateSettings
+│   │   ├── historico/     # Heatmap + streak + ciclos recentes
+│   │   └── configuracoes/  # Durações, intervalo da pausa longa, som/notificação
 │   ├── login/
 │   ├── register/
 │   ├── layout.tsx       # Layout raiz
@@ -60,8 +61,9 @@ pomodoro/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
 │   ├── timer/             # PomodoroTimer, ProgressRing, ThemeSwitcher
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
-│   ├── layout/              # DashboardNav
-│   └── landing/              # Hero, FeatureCard, HowItWorks
+│   ├── settings/            # SettingsForm
+│   ├── layout/               # DashboardNav
+│   └── landing/               # Hero, FeatureCard, HowItWorks
 ├── prisma/
 │   └── schema.prisma     # Modelos: User (com theme), Account, Session, Cycle...
 ├── lib/
@@ -125,6 +127,7 @@ npm run db:push
 - [x] Timer Pomodoro (foco / pausa curta / pausa longa) com 5 temas visuais
 - [x] Histórico de ciclos concluídos, heatmap de ciclos por dia e streak
 - [x] Landing page de apresentação
+- [x] Configurações do timer (durações, intervalo da pausa longa, som/notificação)
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 

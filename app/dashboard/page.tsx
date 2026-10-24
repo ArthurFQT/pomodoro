@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { PomodoroTimer } from "@/components/timer/PomodoroTimer";
 
-// A sessão é lida por requisição (cookies) — não pode ser pré-renderizado.
+// A sessão e as configurações são lidas a cada requisição — não pode ser
+// pré-renderizado estaticamente.
 export const instant = false;
 
 export default async function DashboardPage() {
@@ -12,9 +14,25 @@ export default async function DashboardPage() {
     return null;
   }
 
+  const settings = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      focusMinutes: true,
+      shortBreakMinutes: true,
+      longBreakMinutes: true,
+      longBreakInterval: true,
+      soundEnabled: true,
+      notificationsEnabled: true,
+    },
+  });
+
+  if (!settings) {
+    return null;
+  }
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
-      <PomodoroTimer userId={userId} />
+      <PomodoroTimer userId={userId} settings={settings} />
     </div>
   );
 }
