@@ -19,7 +19,11 @@ import {
 } from "@/lib/timer-storage";
 import { getStyleColors, type StyleId } from "@/lib/styles";
 import { playAlarm, startAmbientNoise, setAmbientNoiseVolume, stopAmbientNoise } from "@/lib/audio-engine";
+import { resetFavicon, updateProgressFavicon } from "@/lib/favicon";
 
+const DEFAULT_TITLE = "Pomodoro";
+
+import { BrainDump } from "./BrainDump";
 import { FullscreenToggle } from "./FullscreenToggle";
 import { StyleFace } from "./StyleFace";
 
@@ -83,6 +87,16 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
     state;
 
   const phaseDurations = getPhaseDurations(settings);
+  const total = phaseDurations[phase];
+  // secondsLeft já é 0 quando status === "completed" (ver efeitos acima) —
+  // cada estilo decide por conta própria como representar "concluído" no seu
+  // próprio formato (ver MinimalStyle, por exemplo).
+  const progress = secondsLeft / total;
+
+  // A cor muda com a fase (foco/pausa), dentro do mesmo estilo/formato —
+  // aplicada no container pra sobrescrever a cor "ambiente" (fase de foco)
+  // herdada do layout do dashboard.
+  const colors = getStyleColors(styleId, phase);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -292,6 +306,29 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
     setAmbientNoiseVolume(settings.soundVolume);
   }, [settings.soundVolume]);
 
+  // Título da aba e favicon mostram o progresso enquanto uma sessão está em
+  // andamento (rodando, pausada ou aguardando confirmação) — útil pra
+  // acompanhar o timer numa aba em segundo plano. Volta ao padrão quando
+  // ocioso ou ao sair da página.
+  useEffect(() => {
+    if (status === "idle") {
+      document.title = DEFAULT_TITLE;
+      resetFavicon();
+      return;
+    }
+
+    const label = status === "completed" ? "Concluído" : formatTime(secondsLeft);
+    document.title = `${label} · ${PHASE_LABELS[phase]} — Pomodoro`;
+    updateProgressFavicon(progress, colors.to);
+  }, [status, phase, secondsLeft, progress, colors.to]);
+
+  useEffect(() => {
+    return () => {
+      document.title = DEFAULT_TITLE;
+      resetFavicon();
+    };
+  }, []);
+
   function handleStart() {
     if (settings.notificationsEnabled) ensureNotificationPermission();
     setState((prev) => ({
@@ -346,16 +383,48 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
     });
   }
 
-  const total = phaseDurations[phase];
-  // secondsLeft já é 0 quando status === "completed" (ver efeitos acima) —
-  // cada estilo decide por conta própria como representar "concluído" no seu
-  // próprio formato (ver MinimalStyle, por exemplo).
-  const progress = secondsLeft / total;
+  // Atalhos de teclado globais — ignora quando o foco está num campo de
+  // formulário (inputs/selects/contenteditable) ou com uma tecla
+  // modificadora pressionada, pra não atropelar outros atalhos do
+  // navegador/sistema.
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const isTypingTarget =
+        target !== null &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable);
 
-  // A cor muda com a fase (foco/pausa), dentro do mesmo estilo/formato —
-  // aplicada aqui via custom property inline pra sobrescrever a cor
-  // "ambiente" (fase de foco) herdada do layout do dashboard.
-  const colors = getStyleColors(styleId, phase);
+      if (isTypingTarget || event.metaKey || event.ctrlKey || event.altKey) {
+        return;
+      }
+
+      if (event.code === "Space") {
+        event.preventDefault();
+        if (status === "completed" && pending) {
+          handleConfirmNext();
+        } else if (status === "running") {
+          handlePause();
+        } else {
+          handleStart();
+        }
+      } else if (event.key.toLowerCase() === "p") {
+        handleSkip();
+      } else if (event.key.toLowerCase() === "f") {
+        toggleFullscreen();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+    // Os handlers são recriados a cada render (closures sobre o estado
+    // atual) — reanexar o listener junto é barato e mantém o atalho sempre
+    // agindo sobre o estado mais recente, sem precisar de useCallback.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, pending]);
+
   const colorVars = {
     "--accent-from": colors.from,
     "--accent-to": colors.to,
@@ -372,6 +441,7 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
       }`}
     >
       <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
+      <BrainDump userId={userId} />
 
       <p className="text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
         {status === "completed"
@@ -410,6 +480,12 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
             Pular
           </button>
         </div>
+      )}
+
+      {!isFullscreen && (
+        <p className="text-xs text-zinc-400 dark:text-zinc-600">
+          Espaço: iniciar/pausar · P: pular · F: tela cheia · B: brain dump
+        </p>
       )}
     </div>
   );
