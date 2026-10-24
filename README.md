@@ -26,6 +26,8 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa e o som/notificação ao concluir são configuráveis em `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar uma etapa, mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (7 opções, escolhidas em `/dashboard/configuracoes` com preview de verdade de cada uma) é salvo na conta e sincroniza entre dispositivos — cada tema troca não só a cor, mas o formato do relógio: anel clássico (Tomate), gomos radiais tipo cítrico, cacho de bolinhas acendendo (Berry), água drenando (Oceano), plantinha crescendo (Floresta), um blob pastel respirando (Soft) e uma xícara de café com leite enchendo (Nata).
 
+A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
+
 ## 🛠️ Stack
 
 | Camada     | Tecnologia                          |
@@ -59,7 +61,7 @@ pomodoro/
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
-│   ├── timer/             # PomodoroTimer, TimerFace
+│   ├── timer/             # PomodoroTimer, TimerFace, FullscreenToggle
 │   │   └── faces/          # Um componente por tema (7): Tomato/Citrus/Berry/Ocean/Forest/Soft/Nata
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
 │   ├── settings/            # SettingsForm, ThemePicker (com preview de cada tema)

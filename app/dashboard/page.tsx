@@ -35,7 +35,7 @@ export default async function DashboardPage() {
   const themeId = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center">
+    <div className="timer-ambient-bg flex flex-1 flex-col items-center justify-center rounded-3xl">
       <PomodoroTimer userId={userId} settings={user} themeId={themeId} />
     </div>
   );
