@@ -39,7 +39,7 @@ export default async function DashboardLayout({
   const theme = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
 
   return (
-    <div data-theme={theme} className="flex flex-1 flex-col bg-zinc-50 dark:bg-zinc-950">
+    <div data-theme={theme} className="flex flex-1 flex-col bg-[var(--background)]">
       <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-6">
           <span className="bg-gradient-to-br from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-lg font-extrabold tracking-tight text-transparent">

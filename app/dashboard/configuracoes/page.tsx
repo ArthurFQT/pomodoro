@@ -1,6 +1,8 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { DEFAULT_COLOR_MODE, isValidColorMode } from "@/lib/color-mode";
 import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
+import { ColorModePicker } from "@/components/settings/ColorModePicker";
 import { GeneralTab } from "@/components/settings/tabs/GeneralTab";
 import { ThemePicker } from "@/components/settings/ThemePicker";
 import { Tabs } from "@/components/ui/Tabs";
@@ -28,6 +30,7 @@ export default async function ConfiguracoesPage() {
       soundEnabled: true,
       notificationsEnabled: true,
       autoStartBreaks: true,
+      colorMode: true,
     },
   });
 
@@ -36,6 +39,9 @@ export default async function ConfiguracoesPage() {
   }
 
   const currentTheme = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
+  const currentColorMode = isValidColorMode(user.colorMode)
+    ? user.colorMode
+    : DEFAULT_COLOR_MODE;
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-10">
@@ -49,7 +55,12 @@ export default async function ConfiguracoesPage() {
           {
             id: "aparencia",
             label: "Aparência",
-            content: <ThemePicker currentTheme={currentTheme} />,
+            content: (
+              <div className="flex flex-col gap-10">
+                <ColorModePicker currentColorMode={currentColorMode} />
+                <ThemePicker currentTheme={currentTheme} />
+              </div>
+            ),
           },
         ]}
       />

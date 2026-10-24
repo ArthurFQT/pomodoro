@@ -28,6 +28,10 @@ Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As
 
 A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
 
+## 🌓 Modo de cor
+
+Além do tema visual, a aba **Aparência** tem um seletor de modo de cor independente: Automático (segue o sistema operacional), Claro, Escuro e OLED (igual ao Escuro, mas com o fundo em preto puro, pensado pra telas OLED). É resolvido no servidor a partir da conta (sem flash de tela errada no carregamento) e, no modo Automático, um pequeno script decide claro/escuro pela preferência do sistema antes da primeira pintura da página.
+
 ## 🛠️ Stack
 
 | Camada     | Tecnologia                          |
@@ -64,8 +68,8 @@ pomodoro/
 │   ├── timer/             # PomodoroTimer, TimerFace, FullscreenToggle
 │   │   └── faces/          # Um componente por tema (7): Tomato/Citrus/Berry/Ocean/Forest/Soft/Nata
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
-│   ├── settings/            # ThemePicker (com preview de cada tema) + tabs/GeneralTab
-│   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider
+│   ├── settings/            # ThemePicker, ColorModePicker + tabs/GeneralTab
+│   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider, RadioGroup
 │   ├── layout/                 # DashboardNav
 │   └── landing/                 # Hero, FeatureCard, HowItWorks
 ├── prisma/
@@ -74,6 +78,7 @@ pomodoro/
 │   ├── prisma.ts         # Prisma Client (singleton)
 │   ├── pomodoro.ts        # Durações e máquina de estado das fases
 │   ├── themes.ts           # Lista de temas visuais (fonte única da verdade)
+│   ├── color-mode.ts        # Modos de cor (Automático/Claro/Escuro/OLED)
 │   ├── heatmap.ts           # Agregação por dia, níveis de intensidade, streak
 │   ├── stats.ts              # Busca os ciclos do usuário e monta as estatísticas
 │   └── timer-storage.ts       # Persiste o timer em andamento no localStorage
@@ -133,6 +138,7 @@ npm run db:push
 - [x] Landing page de apresentação
 - [x] Configurações do timer (durações, intervalo da pausa longa, som/notificação)
 - [x] Configurações em abas (Geral/Aparência) com componentes próprios (Switch, Slider, Tabs) e auto-iniciar pausas
+- [x] Modo de cor manual (Automático/Claro/Escuro/OLED), independente do tema visual
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 
