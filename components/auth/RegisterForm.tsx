@@ -40,20 +40,20 @@ export function RegisterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-5">
       <input
         name="name"
         type="text"
         required
         placeholder="Nome"
-        className="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-red-500 dark:border-zinc-700 dark:bg-zinc-900"
+        className="rounded-xl border border-zinc-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--accent-to)] dark:border-zinc-800"
       />
       <input
         name="email"
         type="email"
         required
         placeholder="E-mail"
-        className="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-red-500 dark:border-zinc-700 dark:bg-zinc-900"
+        className="rounded-xl border border-zinc-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--accent-to)] dark:border-zinc-800"
       />
       <input
         name="password"
@@ -61,7 +61,7 @@ export function RegisterForm() {
         required
         minLength={8}
         placeholder="Senha (mínimo 8 caracteres)"
-        className="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-red-500 dark:border-zinc-700 dark:bg-zinc-900"
+        className="rounded-xl border border-zinc-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--accent-to)] dark:border-zinc-800"
       />
 
       {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
@@ -69,7 +69,7 @@ export function RegisterForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-full bg-gradient-to-br from-red-600 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+        className="rounded-full bg-[var(--accent-to)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-from)] disabled:opacity-60"
       >
         {isPending ? "Criando conta..." : "Criar conta"}
       </button>
