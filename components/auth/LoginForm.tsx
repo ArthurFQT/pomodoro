@@ -15,14 +15,14 @@ export function LoginForm({ action, onGoogle, onGitHub }: LoginFormProps) {
   const [error, formAction, isPending] = useActionState(action, undefined);
 
   return (
-    <div className="flex w-full max-w-sm flex-col gap-6">
+    <div className="flex w-full max-w-sm flex-col gap-8">
       {(onGoogle || onGitHub) && (
         <div className="flex flex-col gap-3">
           {onGoogle && (
             <form action={onGoogle}>
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-200 px-5 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900"
               >
                 Continuar com Google
               </button>
@@ -32,7 +32,7 @@ export function LoginForm({ action, onGoogle, onGitHub }: LoginFormProps) {
             <form action={onGitHub}>
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-medium text-zinc-800 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-100 dark:hover:bg-zinc-900"
+                className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-200 px-5 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-900"
               >
                 Continuar com GitHub
               </button>
@@ -47,20 +47,20 @@ export function LoginForm({ action, onGoogle, onGitHub }: LoginFormProps) {
         </div>
       )}
 
-      <form action={formAction} className="flex flex-col gap-4">
+      <form action={formAction} className="flex flex-col gap-5">
         <input
           name="email"
           type="email"
           required
           placeholder="E-mail"
-          className="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-red-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded-xl border border-zinc-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--accent-to)] dark:border-zinc-800"
         />
         <input
           name="password"
           type="password"
           required
           placeholder="Senha"
-          className="rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-red-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="rounded-xl border border-zinc-200 bg-transparent px-4 py-2.5 text-sm outline-none transition-colors focus:border-[var(--accent-to)] dark:border-zinc-800"
         />
 
         {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
@@ -68,7 +68,7 @@ export function LoginForm({ action, onGoogle, onGitHub }: LoginFormProps) {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-full bg-gradient-to-br from-red-600 to-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="rounded-full bg-[var(--accent-to)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--accent-from)] disabled:opacity-60"
         >
           {isPending ? "Entrando..." : "Entrar"}
         </button>

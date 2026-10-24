@@ -23,12 +23,18 @@ export default async function LoginPage() {
   );
 
   return (
-    <section className="flex flex-1 flex-col items-center justify-center gap-8 bg-zinc-50 px-6 py-20 dark:bg-zinc-950">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="bg-gradient-to-br from-red-600 to-orange-500 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent">
+    <section
+      data-theme="tomato"
+      className="flex flex-1 flex-col items-center justify-center gap-12 bg-zinc-50 px-6 py-24 dark:bg-zinc-950"
+    >
+      <div className="flex flex-col items-center gap-3 text-center">
+        <span className="text-xs font-semibold tracking-widest text-[var(--accent-to)] uppercase">
+          Pomodoro
+        </span>
+        <h1 className="text-3xl font-semibold text-zinc-900 dark:text-zinc-50">
           Entrar
         </h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           Continue de onde parou nos seus ciclos.
         </p>
       </div>
@@ -39,9 +45,9 @@ export default async function LoginPage() {
         onGitHub={hasGitHub ? loginWithGitHub : undefined}
       />
 
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
         Não tem conta?{" "}
-        <Link href="/register" className="font-medium text-red-600 dark:text-red-400">
+        <Link href="/register" className="font-medium text-[var(--accent-to)]">
           Cadastre-se
         </Link>
       </p>
