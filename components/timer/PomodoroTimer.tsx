@@ -20,12 +20,14 @@ import {
 import { getStyleColors, type StyleId } from "@/lib/styles";
 import { playAlarm, startAmbientNoise, setAmbientNoiseVolume, stopAmbientNoise } from "@/lib/audio-engine";
 import { resetFavicon, updateProgressFavicon } from "@/lib/favicon";
-
-const DEFAULT_TITLE = "Pomodoro";
+import { useFlowstate } from "@/components/layout/FlowstateProvider";
 
 import { BrainDump } from "./BrainDump";
 import { FullscreenToggle } from "./FullscreenToggle";
+import { PictureInPicture } from "./PictureInPicture";
 import { StyleFace } from "./StyleFace";
+
+const DEFAULT_TITLE = "Pomodoro";
 
 type TimerState = {
   phase: PhaseType;
@@ -85,6 +87,15 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
   );
   const { phase, focusCount, secondsLeft, status, phaseEndsAt, pending, hydrated } =
     state;
+
+  const { setIsFlowstate } = useFlowstate();
+  // Modo flowstate: o cabeçalho do dashboard some sozinho enquanto um foco
+  // está rodando, sem precisar entrar na tela cheia manualmente — volta ao
+  // normal ao pausar/pular/concluir ou sair da página.
+  useEffect(() => {
+    setIsFlowstate(status === "running" && phase === "FOCUS");
+    return () => setIsFlowstate(false);
+  }, [status, phase, setIsFlowstate]);
 
   const phaseDurations = getPhaseDurations(settings);
   const total = phaseDurations[phase];
@@ -383,6 +394,19 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
     });
   }
 
+  // "Começar"/"Pausar" (ou confirmar a próxima etapa, se já concluída) — a
+  // mesma ação disparada pela barra de espaço e pelo botão do
+  // picture-in-picture.
+  function handleToggle() {
+    if (status === "completed" && pending) {
+      handleConfirmNext();
+    } else if (status === "running") {
+      handlePause();
+    } else {
+      handleStart();
+    }
+  }
+
   // Atalhos de teclado globais — ignora quando o foco está num campo de
   // formulário (inputs/selects/contenteditable) ou com uma tecla
   // modificadora pressionada, pra não atropelar outros atalhos do
@@ -403,13 +427,7 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
 
       if (event.code === "Space") {
         event.preventDefault();
-        if (status === "completed" && pending) {
-          handleConfirmNext();
-        } else if (status === "running") {
-          handlePause();
-        } else {
-          handleStart();
-        }
+        handleToggle();
       } else if (event.key.toLowerCase() === "p") {
         handleSkip();
       } else if (event.key.toLowerCase() === "f") {
@@ -441,6 +459,13 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
       }`}
     >
       <FullscreenToggle isFullscreen={isFullscreen} onToggle={toggleFullscreen} />
+      <PictureInPicture
+        label={status === "completed" ? `${PHASE_LABELS[phase]} concluído` : PHASE_LABELS[phase]}
+        time={status === "completed" ? "✓" : formatTime(secondsLeft)}
+        colorTo={colors.to}
+        isRunning={status === "running"}
+        onToggle={handleToggle}
+      />
       <BrainDump userId={userId} />
 
       <p className="text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">

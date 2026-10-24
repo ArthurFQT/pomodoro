@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { DEFAULT_STYLE, getStyleColors, isValidStyle } from "@/lib/styles";
 import { SignOutButton } from "@/components/auth/SignOutButton";
 import { DashboardNav } from "@/components/layout/DashboardNav";
+import { FlowstateHeader } from "@/components/layout/FlowstateHeader";
+import { FlowstateProvider } from "@/components/layout/FlowstateProvider";
 import { TimezoneSync } from "@/components/TimezoneSync";
 
 // Lê a sessão e o tema do usuário a cada requisição — não pode ser
@@ -53,22 +55,24 @@ export default async function DashboardLayout({
       }
       className="flex flex-1 flex-col bg-[var(--background)]"
     >
-      <TimezoneSync />
+      <FlowstateProvider>
+        <TimezoneSync />
 
-      <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
-        <div className="flex items-center gap-6">
-          <span className="bg-gradient-to-br from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-lg font-extrabold tracking-tight text-transparent">
-            🍅 Pomodoro
-          </span>
-          <DashboardNav />
-        </div>
+        <FlowstateHeader>
+          <div className="flex items-center gap-6">
+            <span className="bg-gradient-to-br from-[var(--accent-from)] to-[var(--accent-to)] bg-clip-text text-lg font-extrabold tracking-tight text-transparent">
+              🍅 Pomodoro
+            </span>
+            <DashboardNav />
+          </div>
 
-        <div className="flex items-center gap-4">
-          <SignOutButton />
-        </div>
-      </header>
+          <div className="flex items-center gap-4">
+            <SignOutButton />
+          </div>
+        </FlowstateHeader>
 
-      <main className="flex flex-1 flex-col px-6 py-12">{children}</main>
+        <main className="flex flex-1 flex-col px-6 py-12">{children}</main>
+      </FlowstateProvider>
     </div>
   );
 }

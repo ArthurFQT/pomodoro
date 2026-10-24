@@ -26,11 +26,13 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa, som/notificação ao concluir e auto-iniciar pausas são configuráveis na aba **Geral** de `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar um foco, o padrão é mostrar um botão único para iniciar a pausa — com "auto-iniciar pausas" ativado, a pausa começa sozinha; voltar da pausa para o foco sempre exige esse clique. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak).
 
-A aba **Sons** controla o alarme ao concluir uma etapa (4 opções — Sino/Suave/Clássico/Digital — com botão de prévia) e o volume, além de um ruído ambiente opcional (branco ou rosa) que toca continuamente enquanto o timer está rodando, em qualquer fase. Todo o áudio é gerado na hora via Web Audio API (osciladores para os alarmes, ruído sintetizado para o ambiente) — nenhum arquivo de áudio é carregado.
+A aba **Sons** controla o alarme ao concluir uma etapa (4 opções — Sino/Suave/Clássico/Digital — com botão de prévia) e o volume, além de um ruído ambiente opcional que toca continuamente enquanto o timer está rodando: branco, rosa, ou um dos 3 temas imersivos — Chuva (ruído filtrado + pingos ocasionais), Floresta (vento suave + "piados" esparsos) e Espaço (drone grave com batimento + brilhos agudos raros). Todo o áudio é gerado na hora via Web Audio API — nenhum arquivo de áudio é carregado.
 
 O visual do timer tem dois eixos independentes, escolhidos na aba **Aparência** (com preview de verdade): o **estilo** — 4 formatos próprios (Minimalista: anel fino; Pastel: blob respirando; Lofi: disco de vinil girando; Retro: visor LCD com barra de progresso) — e, dentro do estilo escolhido, a **cor muda sozinha conforme a fase** (foco/pausa curta/pausa longa), sem precisar trocar de estilo pra isso.
 
-A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão.
+A página do timer tem um fundo ambiente (manchas de luz suaves nas cores do tema ativo) e um botão de tela cheia — usa a Fullscreen API nativa do navegador para esconder todo o resto e mostrar só o relógio sobre o fundo do tema, saindo com Esc ou o próprio botão. Também dá pra abrir o timer numa janelinha flutuante (**picture-in-picture**, nos navegadores com suporte), pra acompanhar enquanto usa outras abas.
+
+Assim que um foco começa a rodar, o cabeçalho do dashboard (navegação, sign out) some sozinho — **modo flowstate** — e volta ao pausar, pular ou concluir a etapa; sem precisar entrar na tela cheia manualmente.
 
 Enquanto uma sessão está em andamento, o título da aba e o favicon mostram o tempo restante e o progresso — útil pra acompanhar numa aba em segundo plano. Atalhos de teclado globais: **Espaço** inicia/pausa, **P** pula a etapa, **F** alterna tela cheia e **B** abre o **brain dump** — um bloco de notas rápido (guardado no navegador) pra anotar o que te distraiu sem sair do timer.
 
@@ -73,13 +75,13 @@ pomodoro/
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
-│   ├── timer/             # PomodoroTimer, StyleFace, FullscreenToggle, ProgressRing, BrainDump
+│   ├── timer/             # PomodoroTimer, StyleFace, FullscreenToggle, PictureInPicture, ProgressRing, BrainDump
 │   │   └── styles/          # Um componente por estilo (4): Minimal/Pastel/Lofi/Retro
 │   ├── TimezoneSync.tsx     # Detecta o fuso horário do navegador e guarda num cookie
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
 │   ├── settings/            # StylePicker, ColorModePicker + tabs/GeneralTab/SoundsTab
 │   ├── ui/                   # Componentes próprios reutilizáveis: Tabs, Switch, Slider, RadioGroup, Select
-│   ├── layout/                 # DashboardNav
+│   ├── layout/                 # DashboardNav, FlowstateProvider/FlowstateHeader
 │   └── landing/                 # Hero, FeatureCard, HowItWorks
 ├── prisma/
 │   └── schema.prisma     # Modelos: User (com theme), Account, Session, Cycle...
@@ -156,6 +158,7 @@ npm run db:push
 - [x] 4 estilos visuais com formato próprio (Minimalista/Pastel/Lofi/Retro), cor que muda por fase
 - [x] Aba Sons: alarme com 4 opções + prévia, volume, ruído ambiente (branco/rosa) durante o foco
 - [x] Fuso horário real no histórico/heatmap/streak, título/favicon dinâmicos, atalhos de teclado, brain dump
+- [x] Picture-in-picture, modo flowstate (cabeçalho some durante o foco), 3 temas sonoros imersivos (Chuva/Floresta/Espaço)
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 

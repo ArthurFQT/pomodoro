@@ -1,5 +1,5 @@
 export type AlarmSound = "bell" | "soft" | "classic" | "digital";
-export type AmbientNoise = "none" | "white" | "pink";
+export type AmbientNoise = "none" | "white" | "pink" | "rain" | "forest" | "space";
 
 export const ALARM_SOUNDS: { id: AlarmSound; label: string }[] = [
   { id: "bell", label: "Sino" },
@@ -12,6 +12,9 @@ export const AMBIENT_NOISES: { id: AmbientNoise; label: string }[] = [
   { id: "none", label: "Nenhum" },
   { id: "white", label: "Ruído branco" },
   { id: "pink", label: "Ruído rosa" },
+  { id: "rain", label: "Chuva" },
+  { id: "forest", label: "Floresta" },
+  { id: "space", label: "Espaço" },
 ];
 
 export const DEFAULT_ALARM_SOUND: AlarmSound = "bell";
