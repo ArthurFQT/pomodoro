@@ -24,7 +24,7 @@ Pomodoro é uma aplicação web para ajudar a organizar o tempo usando a técnic
 
 ## ⏱️ Como funciona o timer
 
-Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa e o som/notificação ao concluir são configuráveis em `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar uma etapa, mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (5 opções) é salvo na conta e sincroniza entre dispositivos.
+Foco → pausa curta, repetindo; a cada N focos (padrão 4), uma pausa longa. As durações de cada etapa, o intervalo da pausa longa e o som/notificação ao concluir são configuráveis em `/dashboard/configuracoes` (padrão: 25/5/15 min). Ao terminar uma etapa, mostra um botão único para iniciar a próxima — nunca avança sozinho sem interação. Cada etapa concluída é gravada no banco (base para o histórico/heatmap/streak). O tema visual (5 opções) é salvo na conta e sincroniza entre dispositivos — e cada tema troca não só a cor, mas o formato do relógio: anel clássico (Tomate), gomos radiais tipo cítrico, cacho de bolinhas acendendo (Berry), água drenando (Oceano) e uma plantinha crescendo (Floresta).
 
 ## 🛠️ Stack
 
@@ -59,7 +59,8 @@ pomodoro/
 │   └── globals.css
 ├── components/
 │   ├── auth/             # Formulários e botões de login/cadastro/logout
-│   ├── timer/             # PomodoroTimer, ProgressRing, ThemeSwitcher
+│   ├── timer/             # PomodoroTimer, TimerFace, ThemeSwitcher
+│   │   └── faces/          # Um componente por tema: Tomato/Citrus/Berry/Ocean/Forest
 │   ├── history/            # Heatmap, StreakTile, RecentCyclesList
 │   ├── settings/            # SettingsForm
 │   ├── layout/               # DashboardNav

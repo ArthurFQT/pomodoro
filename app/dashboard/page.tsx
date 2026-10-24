@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
 import { PomodoroTimer } from "@/components/timer/PomodoroTimer";
 
 // A sessão e as configurações são lidas a cada requisição — não pode ser
@@ -14,9 +15,10 @@ export default async function DashboardPage() {
     return null;
   }
 
-  const settings = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
+      theme: true,
       focusMinutes: true,
       shortBreakMinutes: true,
       longBreakMinutes: true,
@@ -26,13 +28,15 @@ export default async function DashboardPage() {
     },
   });
 
-  if (!settings) {
+  if (!user) {
     return null;
   }
 
+  const themeId = isValidTheme(user.theme) ? user.theme : DEFAULT_THEME;
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center">
-      <PomodoroTimer userId={userId} settings={settings} />
+      <PomodoroTimer userId={userId} settings={user} themeId={themeId} />
     </div>
   );
 }
