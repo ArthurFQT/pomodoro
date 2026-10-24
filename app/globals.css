@@ -53,6 +53,16 @@ body {
   --accent-to: #84cc16;
 }
 
+[data-theme="soft"] {
+  --accent-from: #c4b5fd;
+  --accent-to: #fbcfe8;
+}
+
+[data-theme="nata"] {
+  --accent-from: #a8765a;
+  --accent-to: #e8c9a0;
+}
+
 @keyframes pulse-glow {
   0%,
   100% {
@@ -96,6 +106,42 @@ body {
   animation: leaf-sway 2.4s ease-in-out infinite;
   transform-box: fill-box;
   transform-origin: bottom center;
+}
+
+/* Face "soft" do timer: respiração suave e contínua. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Face "nata" do timer: fiozinho de vapor subindo e sumindo. */
+@keyframes steam-rise {
+  0% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-22px) scaleX(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-steam {
+  animation: steam-rise 2.8s ease-in-out infinite;
 }
 
 /* Heatmap: rampa sequencial de um único hue (o tema ativo), do neutro ao

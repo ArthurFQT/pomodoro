@@ -5,7 +5,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { DEFAULT_THEME, isValidTheme } from "@/lib/themes";
 import { SignOutButton } from "@/components/auth/SignOutButton";
-import { ThemeSwitcher } from "@/components/timer/ThemeSwitcher";
 import { DashboardNav } from "@/components/layout/DashboardNav";
 
 // Lê a sessão e o tema do usuário a cada requisição — não pode ser
@@ -50,7 +49,6 @@ export default async function DashboardLayout({
         </div>
 
         <div className="flex items-center gap-4">
-          <ThemeSwitcher current={theme} />
           <SignOutButton />
         </div>
       </header>
