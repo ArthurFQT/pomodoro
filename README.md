@@ -159,6 +159,7 @@ npm run db:push
 - [x] Aba Sons: alarme com 4 opções + prévia, volume, ruído ambiente (branco/rosa) durante o foco
 - [x] Fuso horário real no histórico/heatmap/streak, título/favicon dinâmicos, atalhos de teclado, brain dump
 - [x] Picture-in-picture, modo flowstate (cabeçalho some durante o foco), 3 temas sonoros imersivos (Chuva/Floresta/Espaço)
+- [ ] PWA offline-first (Service Worker + IndexedDB + botão de instalar) e player de música externo (YouTube/Spotify/URL) — deliberadamente deixado pra depois
 
 ## 🌿 Fluxo de trabalho (Git Flow)
 
