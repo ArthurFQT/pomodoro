@@ -61,9 +61,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.sub) {
+      if (!token.sub) {
+        return session;
+      }
+
+      // O token pode continuar válido (assinado, não expirado) mesmo
+      // depois que o usuário por trás dele deixou de existir no banco
+      // (conta removida em outro lugar). Sem checar isso aqui, páginas
+      // como /login achariam que ainda há sessão e mandariam de volta
+      // pro /dashboard, que por sua vez mandaria pro /login de novo —
+      // um loop de redirecionamento.
+      const userExists = await prisma.user.findUnique({
+        where: { id: token.sub },
+        select: { id: true },
+      });
+
+      if (!userExists) {
+        return { ...session, user: undefined } as unknown as typeof session;
+      }
+
+      if (session.user) {
         session.user.id = token.sub;
       }
+
       return session;
     },
   },
