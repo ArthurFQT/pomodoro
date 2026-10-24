@@ -1,3 +1,11 @@
+import {
+  DEFAULT_ALARM_SOUND,
+  DEFAULT_AMBIENT_NOISE,
+  DEFAULT_SOUND_VOLUME,
+  type AlarmSound,
+  type AmbientNoise,
+} from "./sound";
+
 export type PhaseType = "FOCUS" | "SHORT_BREAK" | "LONG_BREAK";
 
 export type PomodoroSettings = {
@@ -8,6 +16,9 @@ export type PomodoroSettings = {
   soundEnabled: boolean;
   notificationsEnabled: boolean;
   autoStartBreaks: boolean;
+  alarmSound: AlarmSound;
+  soundVolume: number;
+  ambientNoise: AmbientNoise;
 };
 
 export const DEFAULT_SETTINGS: PomodoroSettings = {
@@ -18,6 +29,9 @@ export const DEFAULT_SETTINGS: PomodoroSettings = {
   soundEnabled: true,
   notificationsEnabled: true,
   autoStartBreaks: false,
+  alarmSound: DEFAULT_ALARM_SOUND,
+  soundVolume: DEFAULT_SOUND_VOLUME,
+  ambientNoise: DEFAULT_AMBIENT_NOISE,
 };
 
 export const PHASE_LABELS: Record<PhaseType, string> = {

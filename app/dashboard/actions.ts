@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { auth } from "@/auth";
 import { isValidColorMode } from "@/lib/color-mode";
+import { isValidAlarmSound, isValidAmbientNoise } from "@/lib/sound";
 import { isValidStyle } from "@/lib/styles";
 import { prisma } from "@/lib/prisma";
 
@@ -105,4 +106,44 @@ export async function updateSettings(
   revalidatePath("/dashboard/configuracoes");
 
   return { ok: true, message: "Configurações salvas." };
+}
+
+const soundSettingsSchema = z.object({
+  alarmSound: z.string().refine(isValidAlarmSound, "Som inválido."),
+  soundVolume: z.coerce.number().int().min(0).max(100),
+  ambientNoise: z.string().refine(isValidAmbientNoise, "Ruído inválido."),
+});
+
+export type SoundSettingsFormState = { ok: boolean; message: string } | undefined;
+
+export async function updateSoundSettings(
+  _prevState: SoundSettingsFormState,
+  formData: FormData,
+): Promise<SoundSettingsFormState> {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return { ok: false, message: "Você precisa estar logado." };
+  }
+
+  const parsed = soundSettingsSchema.safeParse({
+    alarmSound: formData.get("alarmSound"),
+    soundVolume: formData.get("soundVolume"),
+    ambientNoise: formData.get("ambientNoise"),
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Verifique os valores informados." };
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: parsed.data,
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/configuracoes");
+
+  return { ok: true, message: "Configurações de som salvas." };
 }

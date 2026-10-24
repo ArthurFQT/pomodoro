@@ -18,6 +18,7 @@ import {
   type TimerStatus,
 } from "@/lib/timer-storage";
 import { getStyleColors, type StyleId } from "@/lib/styles";
+import { playAlarm, startAmbientNoise, setAmbientNoiseVolume, stopAmbientNoise } from "@/lib/audio-engine";
 
 import { FullscreenToggle } from "./FullscreenToggle";
 import { StyleFace } from "./StyleFace";
@@ -52,31 +53,6 @@ function formatTime(totalSeconds: number) {
     .toString()
     .padStart(2, "0");
   return `${minutes}:${seconds}`;
-}
-
-function playChime() {
-  try {
-    const AudioContextClass =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    const ctx = new AudioContextClass();
-    const oscillator = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    oscillator.type = "sine";
-    oscillator.frequency.value = 880;
-    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.6);
-
-    oscillator.connect(gain);
-    gain.connect(ctx.destination);
-    oscillator.start();
-    oscillator.stop(ctx.currentTime + 0.6);
-  } catch {
-    // Web Audio indisponível — segue sem som.
-  }
 }
 
 function ensureNotificationPermission() {
@@ -167,7 +143,7 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
       recordCycle(phase, Math.round(phaseDurations[phase] / 60)).catch(
         () => {},
       );
-      if (settings.soundEnabled) playChime();
+      if (settings.soundEnabled) playAlarm(settings.alarmSound, settings.soundVolume);
       if (settings.notificationsEnabled) {
         notifyPhaseComplete(
           `${PHASE_LABELS[phase]} concluído. Hora de ${NEXT_PHASE_LABELS[
@@ -298,6 +274,23 @@ export function PomodoroTimer({ userId, settings, styleId }: PomodoroTimerProps)
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, [status, phaseEndsAt]);
+
+  // Ruído ambiente: toca continuamente enquanto o timer está rodando, em
+  // qualquer fase. Ajuste de volume não reinicia o som (evita um corte
+  // audível a cada mudança no slider).
+  useEffect(() => {
+    if (status === "running" && settings.ambientNoise !== "none") {
+      startAmbientNoise(settings.ambientNoise, settings.soundVolume);
+    } else {
+      stopAmbientNoise();
+    }
+    return () => stopAmbientNoise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, settings.ambientNoise]);
+
+  useEffect(() => {
+    setAmbientNoiseVolume(settings.soundVolume);
+  }, [settings.soundVolume]);
 
   function handleStart() {
     if (settings.notificationsEnabled) ensureNotificationPermission();
